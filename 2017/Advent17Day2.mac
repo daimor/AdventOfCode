@@ -1,38 +1,29 @@
-  kill
-  set input=289326
-  
-  set data=1
-  set data2(0,0)=1
-  for step=1:1 {
-	  set dir=$select(step#2:1, 1:-1)
-	  for s=1,2 {
-		  for i=1:1:step {
-			  if $i(s(s), dir)
-			  set x=$g(s(1), 0),y=$g(s(2), 0)
-			  set data($i(data))=$lb(x, y)
-			  
-			  if $o(data2all(input))="" {
-				  set temp=$$sum(.data2, x, y)
-				  set data2(x,y)=temp
-				  set data2all(temp)=""
-			  }
-		  }
-	  }
-	  quit:data>input
-  } 
-  
-  set $lb(x,y)=$g(data(input))
-  set part1=$zabs(x)+$zabs(y)
-  zw part1
-  set part2=$o(data2all(input))
-  zw part2
-  quit
-sum(data,x,y) {
-	set sum=0
-	for sx=x-1:1:x+1 {
-		for sy=y-1:1:y+1 {
-			if $i(sum, $g(data(sx,sy)))
+  k
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("c:\advent17\input\2.txt")
+  while 'fs.AtEnd {
+    set line = fs.ReadLine()
+    do line(line)
+  }
+  zw count1,count2
+  q
+line(line) [symbols, count1, count2 ] {
+	set min=999999,max=0
+	set line=$lfs(line, $c(9))
+	f i=1:1:$ll(line) {
+		s c=$lg(line, i)
+		if c>max set max=c
+		if c<min set min=c
+		for j=1:1:$ll(line) {
+			continue:i=j
+			set n1=$lg(line, i)
+			set n2=$lg(line, j)
+			continue:n1=n2
+			if (n1#n2=0) {
+				set cnt2=n1/n2
+			}
 		}
 	}
-	quit sum
+	if $i(count1, max-min)
+	if $i(count2, cnt2)
 }
