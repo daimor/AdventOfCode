@@ -1,0 +1,25 @@
+	kill
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("c:\advent17\input\4.txt")
+	while 'fs.AtEnd {
+		if $i(pos)
+		set line = fs.ReadLine()
+		set line=$lfs(line, " ")
+		set ok=0,ok2=1
+		for i=1:1:$ll(line)-1 {
+			set it=$lg(line, i)
+			set ok=($lf(line, it, i)=0)
+			quit:'ok
+			continue:'ok2
+			for j=i+1:1:$ll(line) {
+				set it2=$lg(line,j)
+				continue:$l(it)'=$l(it2)
+				set ok2=($l($tr(it2,it,""))'=0)
+				quit:'ok2
+			}
+		}
+		if ok,$i(count)
+		if ok,ok2,$i(count2)
+	}
+	zw count,count2
+	quit
