@@ -1,7 +1,7 @@
 ROUTINE Advent17Day4
 	kill
 	set fs = ##Class(%Stream.FileCharacter).%New()
-	set sc=fs.LinkToFile("c:\advent17\input\4.txt")
+	set sc=fs.LinkToFile("/opt/advent/input/2017/day4.txt")
 	while 'fs.AtEnd {
 		if $i(pos)
 		set line = fs.ReadLine()
