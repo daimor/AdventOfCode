@@ -1,3 +1,4 @@
+ROUTINE Advent17Day4
 	kill
 	set fs = ##Class(%Stream.FileCharacter).%New()
 	set sc=fs.LinkToFile("c:\advent17\input\4.txt")
