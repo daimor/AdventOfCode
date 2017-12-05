@@ -1,4 +1,4 @@
-ROUTINE Advent17Day2
+ROUTINE Advent17.Day2
   k
   set fs = ##Class(%Stream.FileCharacter).%New()
   set sc=fs.LinkToFile("/opt/advent/input/2017/day2.txt")

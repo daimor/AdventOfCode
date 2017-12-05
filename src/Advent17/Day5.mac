@@ -1,5 +1,5 @@
-ROUTINE Advent17Day5
-Advent17Day5(part=1) public {
+ROUTINE Advent17.Day5
+Start(part=1) public {
 	set fs = ##Class(%Stream.FileCharacter).%New()
 	set sc=fs.LinkToFile("/opt/advent/input/2017/day5.txt")
   set input = fs.Read(fs.Size)

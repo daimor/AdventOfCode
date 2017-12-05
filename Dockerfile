@@ -12,7 +12,7 @@ RUN ccontrol start $ISC_PACKAGE_INSTANCENAME quietly && \
     echo " do \$system.OBJ.ImportDir(\"/opt/advent/\",\"*.*\",\"ck\",,1)" \
          " do ##class(%Studio.SourceControl.Interface).SourceControlClassSet(\"SourceControl.File\")" \
          " set ^Sources=\"/opt/advent/src/\"" \
-         " set ^Sources(\"MAC\",\"*\")=\"2017/\"" \
+         " set ^Sources(\"MAC\",\"*\")=\"\"" \
          " set ^Sources(\"CLS\",\"*\")=\"\"" \
          " halt" \
     | csession $ISC_PACKAGE_INSTANCENAME -UUSER && \

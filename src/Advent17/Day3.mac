@@ -1,4 +1,4 @@
-ROUTINE Advent17Day3
+ROUTINE Advent17.Day3
   kill
   set input=289326
   
