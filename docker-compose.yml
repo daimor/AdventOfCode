@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  cache:
+    build:
+      context: .
+      args:
+        CACHE_KEY: ${CACHE_KEY}
+    ports:
+      - 1972:1972
+      - 57772:57772
+    volumes:
+      - ./src:/opt/advent/src
+      - ./input:/opt/advent/input:ro
+    
