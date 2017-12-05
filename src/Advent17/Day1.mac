@@ -1,0 +1,16 @@
+ROUTINE Advent17.Day1
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2017/day1.txt")
+  set input = fs.Read(fs.Size)
+  s sum=$select($e(input)=$e(input,*):$e(input), 1:0)
+  f j=1:1:$l(input)-1 {
+    if $e(input, j)=$e(input, j+1),$i(sum, $e(input, j))
+  }
+  write !,"sum1 = ",sum
+  set sum=0,len=$l(input)\2
+  for j=1:1:len {
+    if $e(input, j)=$e(input, len+j),$i(sum, $e(input, j)*2)
+  }
+  write !,"sum2 = ",sum
+  quit
