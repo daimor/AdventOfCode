@@ -1,0 +1,23 @@
+ROUTINE Advent16.Day1
+start() public {
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("/opt/advent/input/2016/day1.txt")
+  set input = fs.Read(fs.Size)
+  set input = $lfs(input, ", ")
+  set (x,y,t,cross)=0
+  for i=1:1:$ll(input) {
+    set v=$lg(input, i)
+    set cmd=$e(v)
+    set cnt=$e(v, 2, *)
+    set t=t+$case(cmd, "R": 1, :-1),t=$select(t<1:4,t>4:1,1:t)
+    for c=1:1:cnt {
+      if t=1,$i(x, 1)
+      if t=2,$i(y, 1)
+      if t=3,$i(x,-1)
+      if t=4,$i(y,-1)
+      if $i(history($lb(x,y)))>1,'cross set cross=$zabs(x)+$zabs(y)
+    }
+  }
+  set res=$zabs(x)+$zabs(y)
+  zw res,cross
+}

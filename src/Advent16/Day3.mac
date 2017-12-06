@@ -1,0 +1,24 @@
+ROUTINE Advent16.Day3
+start() public {
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("/opt/advent/input/2016/day3.txt")
+  set pos=0,cnt=0,cnt2=0
+  set (ta,tb,tc)=3
+  while 'fs.AtEnd {
+    set line=fs.ReadLine()
+    set $lb(a,b,c)=$lfs($zstrip(line,"<>=W"), " ")
+    if $$check(a,b,c),$i(cnt)
+    set pos=pos+1,pos2=pos-1#3+1
+    set ta(pos2)=a,tb(pos2)=b,tc(pos2)=c
+    if pos#3=0 {
+      if $i(cnt2, $$check(ta...))
+      if $i(cnt2, $$check(tb...))
+      if $i(cnt2, $$check(tc...))
+    }
+  }
+  zw cnt,cnt2
+}
+check(a,b,c) {
+  if (a+b)>c,(a+c)>b,(b+c)>a quit 1
+  quit 0
+}
