@@ -3,7 +3,7 @@ Start(part=1) public {
 	set fs = ##Class(%Stream.FileCharacter).%New()
 	set sc=fs.LinkToFile("/opt/advent/input/2017/day5.txt")
   set input = fs.Read(fs.Size)
-  set input = $lfs($tr(input,$c(13)),$c(10)) 
+  set input = $lfs($tr(input,$c(13)),$c(10))
   #; set input = $lb(0,3,0,1,-3)
   set pos=1,step=$lg(input)
   for steps=1:1 {

@@ -1,7 +1,7 @@
 ROUTINE Advent17.Day3
   kill
   set input=289326
-  
+
   set data=1
   set data2(0,0)=1
   for step=1:1 {
@@ -11,7 +11,7 @@ ROUTINE Advent17.Day3
 			  if $i(s(s), dir)
 			  set x=$g(s(1), 0),y=$g(s(2), 0)
 			  set data($i(data))=$lb(x, y)
-			  
+
 			  if $o(data2all(input))="" {
 				  set temp=$$sum(.data2, x, y)
 				  set data2(x,y)=temp
@@ -20,8 +20,8 @@ ROUTINE Advent17.Day3
 		  }
 	  }
 	  quit:data>input
-  } 
-  
+  }
+
   set $lb(x,y)=$g(data(input))
   set part1=$zabs(x)+$zabs(y)
   zw part1
