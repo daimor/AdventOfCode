@@ -1,0 +1,23 @@
+ROUTINE Advent17.Day6
+start() public {
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("/opt/advent/input/2017/day6.txt")
+  set input = fs.Read(fs.Size)
+  set input = $lfs(input, $c(9))
+  #; set input = $lb(0, 2, 7, 0)
+  set len = $ll(input)
+  for pos=1:1 {
+    set max=0,imax=0
+    for i=1:1:len if $lg(input, i)>max set max=$lg(input, i),imax=i
+    set $li(input, imax) = 0
+    set i = imax + 1
+    do {
+      if i>len set i = 1
+      set $li(input,i) = $li(input,i) + 1
+    } while $i(i),$i(max, -1)
+    quit:$d(history(input),first)
+    set history(input)=pos
+  }
+  write !,"part1 = ", pos
+  write !,"part2 = ", pos-first
+}
