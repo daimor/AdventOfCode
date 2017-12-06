@@ -8,14 +8,14 @@ ROUTINE Advent17.Day4
 		set line=$lfs(line, " ")
 		set ok=0,ok2=1
 		for i=1:1:$ll(line)-1 {
-			set it=$lg(line, i)
-			set ok=($lf(line, it, i)=0)
+			set str=$lg(line, i)
+			set ok=($lf(line, str, i)=0)
 			quit:'ok
 			continue:'ok2
 			for j=i+1:1:$ll(line) {
-				set it2=$lg(line,j)
-				continue:$l(it)'=$l(it2)
-				set ok2=($l($tr(it2,it,""))'=0)
+				set str2=$lg(line,j)
+				continue:$l(str)'=$l(str2)
+				set ok2=$tr(str2,str)'=""
 				quit:'ok2
 			}
 		}
