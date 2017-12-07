@@ -1,6 +1,11 @@
  Editor configuration, see http://editorconfig.org
 root = true
 
+[*.txt]
+end_of_line = lf
+insert_final_newline = false
+trim_trailing_whitespace = true
+
 [*.mac]
 charset = utf-8
 indent_style = space

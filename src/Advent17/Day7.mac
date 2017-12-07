@@ -1,0 +1,68 @@
+ROUTINE Advent17.Day7
+start() public {
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("/opt/advent/input/2017/day7.txt")
+  set top=""
+  while 'fs.AtEnd {
+    set line=fs.ReadLine()
+    set prg=$p(line, " ")
+    set num=$p($p(line, ")"), "(", 2)
+    set prgs(prg)=num
+    set list=$lfs($p(line," -> ", 2),", ")
+    set:list'="" prgs(prg,"nodes")=list
+  }
+  set tmp=""
+  for {
+    set tmp=$o(prgs(tmp))
+    quit:tmp=""
+    quit:$$isNotParent(tmp, .prgs)
+  }
+  set head=tmp
+  zw head
+  set res=$$balance(.prgs, prgs(head), prgs(head, "nodes"))
+  set part2=$lg(res,2)
+  zw part2
+}
+isNotParent(prg, &all) {
+  set tmp=""
+  for {
+    set tmp=$o(all(tmp))
+    quit:tmp=""
+    continue:'$d(all(tmp,"nodes"), nodes)
+    if $lf(nodes, prg) return 0
+  }
+  quit 1
+}
+sum(list) {
+  set res=0,ptr=0
+  while $listnext(list,ptr,val) {
+    if $i(res,val)
+  }
+  quit res
+}
+out(list, norm) {
+  set ptr=0
+  while $listnext(list,ptr,val) {
+    if $i(pos),val'=norm return pos
+  }
+  quit 0
+}
+balance(&all, weight, nodes="") public {
+  if nodes="" {
+    quit $lb(weight, 0)
+  }
+  set prg="",wcs="",fixl="",wl=""
+  for i=1:1:$ll(nodes) {
+    set node=$lg(nodes, i)
+    set w = all(node)
+    set wl = wl _$lb(w)
+    set $lb(wc, fix) = $$balance(.all, w, $g(all(node, "nodes")))
+    set wcs=wcs_$lb(wc)
+    set:fix fixl=fixl_$lb(fix)
+  }
+  set norm=$select(($ll(wcs)'>2)||($lg(wcs)=$lg(wcs,2)):$lg(wcs), 1:$lg(wcs,3))
+  set out = $$out(wcs, norm)
+  set fix = $lg(fixl)
+  if fix||('out)||('norm) return $lb(weight + ($lg(wcs)*$ll(wcs)), fix)
+  quit $lb(weight + $$sum(wcs) + norm - $lg(wcs, out), $lg(wl, out) + norm - $lg(wcs, out))
+}
