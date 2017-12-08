@@ -1,0 +1,34 @@
+ROUTINE Advent17.Day8
+start() public {
+	set fs = ##Class(%Stream.FileCharacter).%New()
+	set sc=fs.LinkToFile("/opt/advent/input/2017/day8.txt")
+  set top="",maxAll=-99999
+  while 'fs.AtEnd {
+    set line=fs.ReadLine()
+    do call(line, .regs, .maxAll)
+  }
+  set max=$$max(.regs)
+  zw max
+  zw maxAll
+}
+call(code, &regs, &maxAll) [regs] {
+  set $lb(reg,cmd,num,if,op1,cond,op2)=$lfs(code, " ")
+  if cond="==" set cond="="
+  if cond="!=" set cond="'="
+  if op1'=+op1 set regs(op1)=$g(regs(op1),0),op1="regs("""_op1_""")"
+  if op2'=+op2 set regs(op2)=$g(regs(op2),0),op2="regs("""_op2_""")"
+  set fullCond = op1_cond_op2
+  set inc=$s(cmd="dec": -num, 1:num)
+  if @fullCond,$i(regs(reg), inc)
+  set max=$$max(.regs)
+  if max>maxAll set maxAll=max
+}
+max(&regs) {
+  set r="",max=-99999,maxr=""
+  for {
+    set r=$o(regs(r),1,v)
+    q:r=""
+    if v>max set max=v,maxr=r
+  }
+  return max
+}
