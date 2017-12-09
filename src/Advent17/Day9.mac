@@ -1,23 +1,24 @@
 ROUTINE Advent17.Day9
+#include helper
 start() public {
-	set fs = ##Class(%Stream.FileCharacter).%New()
-	set sc=fs.LinkToFile("/opt/advent/input/2017/day9.txt")
-  set input = fs.Read(fs.Size)
-  set len = $l(input)
-  set pos = 0,score = 0,sum1 = 0, sum2 = 0
-  set pat = ##class(%Regex.Matcher).%New("!.", input)
-  set input = pat.ReplaceAll("")
-  while pos<=len {
-    set c=$e(input, $i(pos))
-    set ppos=pos
-    if c="<" {
-      set pos=$f(input, ">", pos)-1
-      if $i(sum2, pos - ppos - 1)
-      continue
+  $$$input(lines)
+  while $$$nextLine(lines,input) {
+    set len = $l(input)
+    set pos = 0,score = 0,sum1 = 0, sum2 = 0
+    set pat = ##class(%Regex.Matcher).%New("!.", input)
+    set input = pat.ReplaceAll("")
+    while pos<=len {
+      set c=$e(input, $i(pos))
+      set ppos=pos
+      if c="<" {
+        set pos=$f(input, ">", pos)-1
+        if $i(sum2, pos - ppos - 1)
+        continue
+      }
+      if c="{",$i(score),$i(sum1, score) continue
+      if c="}",$i(score,-1) continue
     }
-    if c="{",$i(score),$i(sum1, score) continue
-    if c="}",$i(score,-1) continue
+    zw sum1
+    zw sum2
   }
-  zw sum1
-  zw sum2
 }

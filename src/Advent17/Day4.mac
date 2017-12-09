@@ -1,26 +1,26 @@
 ROUTINE Advent17.Day4
-	kill
-	set fs = ##Class(%Stream.FileCharacter).%New()
-	set sc=fs.LinkToFile("/opt/advent/input/2017/day4.txt")
-	while 'fs.AtEnd {
-		if $i(pos)
-		set line = fs.ReadLine()
-		set line=$lfs(line, " ")
-		set ok=0,ok2=1
-		for i=1:1:$ll(line)-1 {
-			set str=$lg(line, i)
-			set ok=($lf(line, str, i)=0)
-			quit:'ok
-			continue:'ok2
-			for j=i+1:1:$ll(line) {
-				set str2=$lg(line,j)
-				continue:$l(str)'=$l(str2)
-				set ok2=$tr(str2,str)'=""
-				quit:'ok2
-			}
-		}
-		if ok,$i(count)
-		if ok,ok2,$i(count2)
-	}
-	zw count,count2
-	quit
+#include helper
+start() public {
+  $$$input(lines)
+  while $$$nextLine(lines, line) {
+    set line=$lfs(line, " ")
+    set ok=0,ok2=1
+    for i=1:1:$ll(line)-1 {
+      set str=$lg(line, i)
+      set ok=($lf(line, str, i)=0)
+      quit:'ok
+      continue:'ok2
+      set tmp1=$$$sort(str)
+      for j=i+1:1:$ll(line) {
+        set str2=$lg(line,j)
+        set tmp2=$$$sort(str2)
+        continue:$l(str)'=$l(str2)
+        set ok2=(tmp1'=tmp2)
+        quit:'ok2
+      }
+    }
+    if ok,$i(count)
+    if ok,ok2,$i(count2)
+  }
+  zw count,count2
+}

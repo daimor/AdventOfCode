@@ -1,0 +1,55 @@
+ROUTINE helper
+readAll(routine) public {
+  zw routine
+  quit "test"
+}
+max(&list, &ind, delim = ",") public {
+  set max = -99999,ind=""
+  if $d(list)\10 {
+    set el=""
+    for {
+      set el=$o(list(el), 1, v)
+      quit:el=""
+      if v>max set max=v,ind=el
+    }
+  } else {
+    if '$lv(list) set list=$lfs(list, delim)
+    for i=1:1:$ll(list) {
+      set v = $lg(list, i)
+      if v>max set max=v,ind=i
+    }
+  }
+  return max
+}
+sum(list, delim = ",") public {
+  set sum = 0
+  if $d(list)\10 {
+    set el=""
+    for {
+      set el=$o(list(el), 1, v)
+      quit:el=""
+      if $i(sum, v)
+    }
+  } else {
+    if '$lv(list) set list=$lfs(list, delim)
+    for i=1:1:$ll(list) {
+      set v = $lg(list, i)
+      if $i(sum, v)
+    }
+  }
+  return sum
+}
+sort(list) public {
+  for i=1:1:$l(list) {
+    set c = $e(list, i)
+    if $i(sort(c))
+  }
+  set res = ""
+  set c = ""
+  for {
+    set c = $o(sort(c), 1, cnt)
+    quit:c=""
+    set res = res _ $tr($j("", cnt), " ", c)
+  }
+  return res
+}
