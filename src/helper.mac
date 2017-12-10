@@ -53,3 +53,12 @@ sort(list) public {
   }
   return res
 }
+toHex(string) public {
+  set res = ""
+  for i=1:1:$l(string) {
+    set val = $a(string, i)
+    set hex = $zcvt($tr($j($zhex(val), 2), " ", "0"), "l")
+    set res = res_hex
+  }
+  return res
+}

@@ -1,0 +1,56 @@
+ROUTINE Advent17.Day10
+#include helper
+start() public {
+  $$$input(lines)
+  while $$$nextLine(lines,input) {
+    #; Part 1
+    do knot(.data, $lfs(input), 256, 1)
+    set part1 = data(0) * data(1)
+    zw part1
+
+    #; Part 2
+    set lengths = ""
+    for i=1:1:$l(input) {
+      set lengths = lengths _ $lb($a(input, i))
+    }
+    set lengths = lengths _ $lb(17, 31, 73, 47, 23)
+    do knot(.data, lengths, 256, 64)
+    set hash = $$hash(.data, 256)
+    set hex = $$$toHex(hash)
+    write "hash = ",hex
+  }
+}
+knot(&data, lengths, length, rounds) {
+  kill data
+  for i=0:1:length-1 {
+    set data(i)=i
+  }
+  set pos = 0, skip = 0
+  for round=1:1:rounds {
+    set ptr = 0
+    while $listnext(lengths, ptr, len) {
+      for j=1:1:len\2 {
+        set pos1 = pos + j - 1 # length
+        set pos2 = pos + len - j # length
+        if pos1 < 0 set pos1 = length - pos1
+        if pos2 < 0 set pos2 = length - pos2
+        set $lb(data(pos1), data(pos2)) = $lb(data(pos2), data(pos1))
+      }
+      set pos = (pos + len + $i(skip)) # length - 1
+      if pos < 0 set pos = length - 1
+    }
+  }
+}
+hash(&data, length) {
+  set res = ""
+  for part=1:1:length\16 {
+    set v1 = $c(data(part - 1 * 16))
+    for i=1:1:15 {
+      set pos = part - 1 * 16 + i
+      set v2 = $c(data(pos))
+      set v1 = $zb(v1, v2, 6)
+    }
+    set res = res_v1
+  }
+  return res
+}

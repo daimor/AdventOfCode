@@ -15,4 +15,5 @@ ROUTINE helper [Type=INC]
 #def1arg max(%args) $$max^helper(%args)
 #def1arg sum(%args) $$sum^helper(%args)
 #def1arg sort(%args) $$sort^helper(%args)
+#def1arg toHex(%args) $$toHex^helper(%args)
 
