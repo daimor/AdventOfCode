@@ -1,0 +1,31 @@
+ROUTINE Advent17.Day11
+#include helper
+start() public {
+  $$$input(lines)
+  while $$$nextLine(lines,input) {
+    set input = $lfs(input)
+    set (x,y)=0,max=0
+    set ptr=0
+    while $listnext(input,ptr,go) {
+      if go="ne" set x=x+1,y=y+1
+      if go="se" set x=x+1
+      if go="n" set y=y+1
+      if go="s" set y=y-1
+      if go="nw" set x=x-1
+      if go="sw" set x=x-1,y=y-1
+      set tmax=$$steps(x,y)
+      set max=$select(tmax>max: tmax, 1:max)
+    }
+    set steps = $$steps(x,y)
+    zw steps,max
+  }
+}
+steps(x, y) {
+  if $e($fn(x,"+"))=$e($fn(y,"+")) {
+    set ax = $zabs(x)
+    set ay = $zabs(y)
+    if ax>ay return ax
+    return ay
+  }
+  return $zabs(x-y)
+}
