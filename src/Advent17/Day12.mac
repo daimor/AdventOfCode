@@ -1,0 +1,34 @@
+ROUTINE Advent17.Day12
+#include helper
+start() public {
+  $$$input(lines)
+  while $$$nextLine(lines,input) {
+    set $lb(prg, list) = $lfs(input, " <-> ")
+    set list = $lfs(list, ", ")
+    for i = 1:1:$ll(list) {
+      set tops($lg(list, i), prg) = ""
+    }
+  }
+  set first = $$count(.tops, 0, .all)
+  zw first
+  set groups = 1
+  while $d(tops) {
+    set min = $$$min(.tops)
+    set cnt = $$count(.tops, min, .all)
+    if $i(groups)
+  }
+  zw groups
+}
+count(arr, top, all) {
+  set cnt = 1
+  quit:$d(all(top)) 0
+  set all(top)=""
+  set prg = ""
+  for {
+    set prg = $o(arr(top, prg))
+    quit:prg=""
+    set cnt = cnt + $$count(.arr, prg, .all)
+  }
+  kill arr(top)
+  quit cnt
+}

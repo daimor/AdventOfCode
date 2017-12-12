@@ -10,7 +10,11 @@ max(&list, &ind, delim = ",") public {
     for {
       set el=$o(list(el), 1, v)
       quit:el=""
-      if v>max set max=v,ind=el
+      if $d(v),v>max {
+        set max=v,ind=el
+      } elseif '$d(v),el>max {
+        set max=el
+      }
     }
   } else {
     if '$lv(list) set list=$lfs(list, delim)
@@ -20,6 +24,28 @@ max(&list, &ind, delim = ",") public {
     }
   }
   return max
+}
+min(&list, &ind, delim = ",") public {
+  set min = 99999999,ind=""
+  if $d(list)\10 {
+    set el=""
+    for {
+      set el=$o(list(el), 1, v)
+      quit:el=""
+      if $d(v),v<min {
+        set min=v,ind=el
+      } elseif '$d(v),el<min {
+        set min=el
+      }
+    }
+  } else {
+    if '$lv(list) set list=$lfs(list, delim)
+    for i=1:1:$ll(list) {
+      set v = $lg(list, i)
+      if v<min set min=v,ind=i
+    }
+  }
+  return min
 }
 sum(list, delim = ",") public {
   set sum = 0
