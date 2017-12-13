@@ -1,0 +1,29 @@
+ROUTINE Advent17.Day13
+#include helper
+start() public {
+  $$$input(lines)
+  set data = ""
+  while $$$nextLine(lines,input) {
+    set data = data _ $lb($lfs(input, ": "))
+  }
+  set last = $o(data(""), -1)
+  set part1 = $$catch(data)
+  zw part1
+  for part2=1:1 {
+    quit:'$$catch(data, part2)
+  }
+  zw part2
+}
+catch(data, delay = 0) {
+  set cnt = 0
+  set ptr = 0
+  while $listnext(data, ptr, list) {
+    set $lb(l, d) = list
+    if (l + delay)#(d-1*2) = 0 {
+      if delay return 1
+      set cnt = cnt + (l*d)
+    }
+  }
+  quit cnt
+}
+
