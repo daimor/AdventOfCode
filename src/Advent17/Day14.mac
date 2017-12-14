@@ -1,0 +1,37 @@
+ROUTINE Advent17.Day14
+#include helper
+start() public {
+  set lines = $lb("flqrgnkx","ffayrhll")
+  set ptr = 0
+  while $listnext(lines,ptr,input) {
+    zw input
+    set count = 0,count2 = 0
+    for r=0:1:127 {
+      set tmp = input_"-"_r
+      set hash = $$$knot(tmp)
+      set bits = $$$toBits(hash)
+      for i=1:1:128 {
+        set grid(r,i-1) = $bit(bits, i)
+      }
+      if $i(count, $bitcount(bits, 1))
+    }
+    zw count
+    set groups = 0
+    for x=0:1:127 {
+      for y=0:1:127 {
+        if grid(x,y)=1,$i(groups) {
+          do removeGroup(.grid, x, y)
+        }
+      }
+    }
+    zw groups
+  }
+}
+removeGroup(grid, x, y) {
+  if $g(grid(x,y),0)=0 return
+  set grid(x,y)=0
+  do removeGroup(.grid, x+1, y)
+  do removeGroup(.grid, x-1, y)
+  do removeGroup(.grid, x, y+1)
+  do removeGroup(.grid, x, y-1)
+}

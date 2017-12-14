@@ -17,4 +17,6 @@ ROUTINE helper [Type=INC]
 #def1arg sum(%args) $$sum^helper(%args)
 #def1arg sort(%args) $$sort^helper(%args)
 #def1arg toHex(%args) $$toHex^helper(%args)
+#def1arg toBits(%args) $$toBits^helper(%args)
+#def1arg knot(%args) $$knot^helper(%args)
 

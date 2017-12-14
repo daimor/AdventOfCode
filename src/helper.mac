@@ -1,7 +1,23 @@
 ROUTINE helper
-readAll(routine) public {
-  zw routine
-  quit "test"
+knot(str) public {
+  set lengths = ""
+  for i=1:1:$l(str) {
+    set lengths = lengths _ $lb($a(str, i))
+  }
+  set lengths = lengths _ $lb(17, 31, 73, 47, 23)
+  set hash=$$knot^Advent17.Day10(.data, lengths, 256, 64)
+  return hash
+}
+toBits(str) public {
+  set bits = ""
+  for i=1:1:$l(str) {
+    set c = $zhex($e(str, i))
+    set b = $factor(c)
+    for j=4:-1:1 {
+      set $bit(bits, $bitcount(bits) + 1) = $bit(b,j)
+    }
+  }
+  return bits
 }
 max(&list, &ind, delim = ",") public {
   set max = -99999,ind=""
