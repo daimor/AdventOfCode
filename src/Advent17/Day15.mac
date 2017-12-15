@@ -1,0 +1,30 @@
+ROUTINE Advent17.Day15
+#include helper
+start() public {
+  set ia=289,ib=629
+  set fa=16807,fb=48271
+  set div=2147483647
+  set a=ia,b=ib,count=0
+  set low=65536
+  for p=1:1:40000000 {
+    set va=a*fa#div
+    set vb=b*fb#div
+    if (va#low)=(vb#low),$i(count)
+    set a=va,b=vb
+  }
+  zw count
+  set a=ia,b=ib,count=0
+  for p=1:1:5000000 {
+    set a=$$find(a, fa, 4)
+    set b=$$find(b, fb, 8)
+    if (a#low)=(b#low),$i(count)
+  }
+  zw count
+}
+find(v, f, d) {
+  set div=2147483647
+  do {
+    set v=v*f#div
+  } while v#d'=0
+  return v
+}
