@@ -1,0 +1,43 @@
+ROUTINE Advent17.Day16
+#include helper
+start() public {
+  $$$inputAll(lines)
+  while $$$nextLine(lines,input) {
+    set dances=$lfs(input,",")
+    set line = ""
+    for i=0:1:15 set line=line_$c(97+i)
+
+    for i=1:1:100 {
+      set line=$$dance(line, dances)
+      write:i=1 !,"part1 - ",line
+      if $d(history(line),pos) {
+        set pos = 1000000000#(i-1)
+        set line = history(pos)
+        quit
+      }
+      set pos=$i(history)
+      set history(line)=pos
+      set history(pos)=line
+    }
+    write !,"part2 - ",line
+  }
+}
+dance(line, dances) {
+  f i=1:1:$ll(dances) {
+    set dance = $lg(dances, i)
+    set cmd = $e(dance)
+    set info = $e(dance, 2, *)
+    if $e(cmd)="s" {
+      set line=$e(line, *-info+1,*)_$e(line,1,*-info)
+    } elseif "xp"[cmd {
+      set $lb(p1,p2)=$lfs(info,"/")
+      if cmd="x" {
+        set p1=$e(line, p1+1)
+        set p2=$e(line, p2+1)
+      }
+      set line=$tr(line,p1_p2,"12")
+      set line=$tr(line,"21",p1_p2)
+    }
+  }
+  return line
+}

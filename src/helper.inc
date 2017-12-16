@@ -5,12 +5,12 @@ ROUTINE helper [Type=INC]
 
 #define inputAll(%input) $$$openFile ##continue
   set %input = fs.Read(fs.Size) ##continue
-  set %input = $lfs($tr(%input,$c(13)),$c(10))
+  set %input = $lfs($tr(%input,$c(13)),$c(10)),ptr=0
 
 #define input(%lines) $$$openFile ##continue
   while 'fs.AtEnd { set %lines($i(%lines)) = fs.ReadLine() }
 
-#define nextLine(%lines, %line) $d(%lines($i(index)), %line)
+#define nextLine(%lines, %line) ($lv(%lines)&&$listnext(%lines,ptr,%line))||($d(%lines($i(index)), %line))
 
 #def1arg max(%args) $$max^helper(%args)
 #def1arg min(%args) $$min^helper(%args)
