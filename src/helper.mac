@@ -104,3 +104,7 @@ toHex(string) public {
   }
   return res
 }
+insert(data, pos, val) public {
+  set val = $li(data, 1, pos)_$lb(val)_$li(data, pos + 1, $ll(data))
+  return val
+}

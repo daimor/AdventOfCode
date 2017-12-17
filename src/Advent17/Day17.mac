@@ -1,0 +1,21 @@
+ROUTINE Advent17.Day17
+#include helper
+start() [data] public {
+  set steps = 370
+
+  set data = $lb(0)
+  set cur = 0
+  for i=1:1:2018 {
+    set cur = ((cur + steps) # $ll(data)) + 1
+    set data = $$$insert(data, cur, i)
+  }
+  set part1 = $lg(data, $lf(data, 2017) + 1)
+  write !,"part1 = ",part1
+  set cur = 0, size = 1
+  for i=1:1:50000001 {
+    set cur = (cur + steps) # size + 1
+    if cur = 1 set part2 = i
+    if $i(size)
+  }
+  write !,"part2 = ",part2
+}

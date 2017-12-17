@@ -10,7 +10,7 @@ ROUTINE helper [Type=INC]
 #define input(%lines) $$$openFile ##continue
   while 'fs.AtEnd { set %lines($i(%lines)) = fs.ReadLine() }
 
-#define nextLine(%lines, %line) ($lv(%lines)&&$listnext(%lines,ptr,%line))||($d(%lines($i(index)), %line))
+#define nextLine(%lines, %line) $d(lines)&&(($lv(%lines)&&$listnext(%lines,ptr,%line))||($d(%lines($i(index)), %line)))
 
 #def1arg max(%args) $$max^helper(%args)
 #def1arg min(%args) $$min^helper(%args)
@@ -19,4 +19,5 @@ ROUTINE helper [Type=INC]
 #def1arg toHex(%args) $$toHex^helper(%args)
 #def1arg toBits(%args) $$toBits^helper(%args)
 #def1arg knot(%args) $$knot^helper(%args)
+#def1arg insert(%args) $$insert^helper(%args)
 
