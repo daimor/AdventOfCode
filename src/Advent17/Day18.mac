@@ -1,0 +1,81 @@
+ROUTINE Advent17.Day18
+#include helper
+start() [data] public {
+  $$$inputAll(lines)
+
+  set part1 = $$run(lines)
+  zw part1
+
+  do initEvent(0),initEvent(1)
+  job run(lines, 0, 1) set c1=$zc
+  job run(lines, 1, 0) set c2=$zc
+  set $lb(state, part2)=$system.Event.WaitMsg()
+  zw part2
+}
+run(&code, p = 0, r = 0) public {
+  set regs("p") = p
+  set count = 0
+  hang $r(10)/1000
+
+  set pos=1,sound=""
+  for {
+    set line = $lg(code, pos)
+    quit:line=""
+    set $lb(cmd, op1, op2) = $lfs(line, " ")
+    set v1 = $s(op1'=+op1: $g(regs(op1),0), 1: op1)
+    set v2 = $s(op2'=+op2: $g(regs(op2),0), 1: op2)
+    set regs(op1) = $g(regs(op1), 0)
+    if cmd="set" {
+      set regs(op1) = v2
+    } elseif cmd="add" {
+      set regs(op1) = v1 + v2
+    } elseif cmd="mul" {
+      set regs(op1) = v1 * v2
+    } elseif cmd="mod" {
+      set regs(op1) = v1 # v2
+    } elseif cmd="jgz",v1>0 {
+      set pos = pos + v2
+      continue
+    } elseif cmd="snd" {
+      if r+p {
+        do send(r, v1)
+        if $i(count)
+      } else {
+        set last = v1
+      }
+    } elseif cmd="rcv" {
+      if r+p {
+        set $lb(state, val) = $$receive(p)
+        if state = 0 quit
+        set regs(op1) = val
+      } elseif v1'=0 {
+        quit:'$d(last)
+        set sound = last
+        kill last
+      }
+    }
+
+    set pos=pos + 1
+  }
+
+  if r+p {
+    do:p $system.Event.Signal($zp, count)
+  }
+  quit sound
+}
+initEvent(p) {
+  set res = "advent"_p
+  if '$system.Event.Defined(res) {
+    do $system.Event.Create(res)
+  }
+  do $system.Event.Clear(res)
+}
+send(p, val) {
+  set res = "advent"_p
+  do $system.Event.Signal(res, val)
+}
+receive(p) {
+  set res = "advent"_p
+  set msg = $system.Event.WaitMsg(res, 1)
+  quit msg
+}
