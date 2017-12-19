@@ -1,0 +1,36 @@
+ROUTINE Advent17.Day19
+#include helper
+start() [data] public {
+  $$$input(lines)
+  set y = 1
+  set x = $f(lines(y), "|") - 1
+  set dir = 1
+  set res = ""
+  for steps=1:1 {
+    quit:dir=0
+    set y = y + $case(dir, -1: -1, 1: 1, :0)
+    set x = x + $case(dir, -2: -1, 2: 1, :0)
+    set v = $e($g(lines(y)), x)
+    if (v="")||(v=" ") quit
+    if $tr(v, "|+-")'="" {
+      set res = res_v
+    } else {
+      set prevDir=dir
+      set dir = $$findDir(.lines, x, y, dir, v)
+    }
+  }
+  write !,"path = ",res
+  write !,"steps = ",steps
+}
+findDir(&lines, x, y, dir, v) {
+  if v="+" {
+    if $zabs(dir)=1 {
+      if $zstrip($e(lines(y), x+1),"*W")'="" return 2
+      else  return -2
+    } else {
+      if $zstrip($e($g(lines(y+1)), x),"*W")'="" return 1
+      else  return -1
+    }
+  }
+  return dir
+}
