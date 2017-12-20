@@ -1,0 +1,71 @@
+ROUTINE Advent17.Day20
+#include helper
+start() public {
+  $$$input(lines)
+  while $$$nextLine(lines, line) {
+    set $lb(x,y,z)=$lfs($p($p(line, "p=<",2,*),">"))
+    set $lb(vx,vy,vz)=$lfs($p($p(line, "v=<",2,*),">"))
+    set $lb(ax,ay,az)=$lfs($p($p(line, "a=<",2,*),">"))
+    set particles(index,"p") = $lb(x,y,z)
+    set particles(index,"v") = $lb(vx,vy,vz)
+    set particles(index,"a") = $lb(ax,ay,az)
+    if $i(particles)
+  }
+  set prev = ""
+  merge particles2 = particles
+  for i=1:1 {
+    set part1 = $$move(.particles)
+    set part2 = $$moveAndClean(.particles2)
+
+    if prev'=$lb(part1,part2) {
+      w !,?5,part1," - ",part2
+      set loop = 0
+    } elseif $i(loop)>1000 {
+      quit
+    }
+    set prev=$lb(part1,part2)
+  }
+  write !!
+  zw part1,part2
+}
+move(&particles, &collisions) {
+  set min = 9999999, part1 = ""
+  set index=""
+  for {
+    set index = $o(particles(index))
+    quit:index=""
+    set $lb(x,y,z) = particles(index,"p")
+    set $lb(vx,vy,vz) = particles(index,"v")
+    set $lb(ax,ay,az) = particles(index,"a")
+    set $lb(vx,vy,vz) = $lb(vx+ax,vy+ay,vz+az)
+    set $lb(x,y,z) = $lb(x+vx,y+vy,z+vz)
+    set particles(index,"p") = $lb(x,y,z)
+    set particles(index,"v") = $lb(vx,vy,vz)
+    set dist = $zabs(x)+$zabs(y)+$zabs(z)
+    if $i(collisions($lb(x,y,z))) {
+      set collisions($lb(x,y,z), index) = ""
+    }
+    if dist<min {
+      set min=dist
+      set part1 = index - 1
+    }
+  }
+  return part1
+}
+moveAndClean(&particles) {
+  do move(.particles, .collisions)
+  set tmp = ""
+  for {
+    set tmp=$o(collisions(tmp), 1, cnt)
+    quit:tmp=""
+    continue:cnt<2
+    set index = ""
+    for {
+      set index=$o(collisions(tmp, index))
+      quit:index=""
+      kill particles(index)
+      set particles = particles-1
+    }
+  }
+  return particles
+}
