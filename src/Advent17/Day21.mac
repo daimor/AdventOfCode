@@ -1,0 +1,96 @@
+ROUTINE Advent17.Day21
+#include helper
+start() public {
+  set input(1) = ".#."
+  set input(2) = "..#"
+  set input(3) = "###"
+  $$$input(lines)
+  while $$$nextLine(lines, line) {
+    set $lb(from,to)=$lfs(line, " => ")
+    set rules(from)=to
+  }
+  for i=1:1:18 {
+    do convert(.input, .rules)
+    if i=5 {
+      write !,"part1 = ",$$count(.input)
+    }
+  }
+  write !,"part2 = ",$$count(.input)
+}
+count(&input) {
+  set size = $l(input(1))
+  set count = 0
+  for i=1:1:size {
+    set line = input(i)
+    set lineOn = $tr(line, ".")
+    set count = count + $l(lineOn)
+  }
+  quit count
+}
+convert(&input, &rules) {
+  set size = $l(input(1))
+  if size#2=0 {
+    set parts = size\2
+    set size = 2
+  } else {
+    set parts = size\3
+    set size = 3
+  }
+  for x=1:1:parts {
+    for y=1:1:parts {
+      set square = $$square(.input, x, y, size)
+      set replaceWith = $$find(square, .rules)
+      set replaceWith = $lfs(replaceWith, "/")
+      do replace(.new, x, y, replaceWith)
+    }
+  }
+  kill input
+  merge input = new
+}
+replace(&input, x, y, square) {
+  set size = $l($lg(square))
+  for i=1:1:size {
+    set temp = $g(input(y - 1 * size + i))
+    set $e(temp, x - 1 * size + 1, x * size) = $lg(square, i)
+    set input(y - 1 * size + i) = temp
+  }
+}
+square(&input,x,y,size) {
+  set res = ""
+  for i=1:1:size {
+    set line = input(y-1*size+i)
+    set res=res_$lb($e(line, x-1*size+1, x*size))
+  }
+  return res
+}
+find(square, &rules) {
+  #define add(%line) set all($i(all)) = $s($lv(%line):$lts(%line, "/"), 1:%line)
+  set res = ""
+  set size = $ll(square)
+  for tmp=square,$$flip(square) {
+    $$$add(tmp)
+    set temp1 = "", temp2 = ""
+    for i=1:1:size {
+      set temp1=temp1_$lb($lg(tmp, size-i+1))
+      set temp2=temp2_$lb($reverse($lg(tmp, i)))
+    }
+    $$$add(temp1)
+    $$$add(temp2)
+  }
+  for i=1:1:all {
+    set line = all(i)
+    if $d(rules(line), res) return res
+  }
+  break
+  return ""
+}
+flip(square) {
+  set size = $ll(square)
+  set temp = ""
+  for i=1:1:size {
+    for j=1:1:size {
+      set $li(temp, j) = $lg(temp, j) _ $e($lg(square, size - i + 1), j)
+    }
+  }
+  return temp
+}
