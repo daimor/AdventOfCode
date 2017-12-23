@@ -1,0 +1,63 @@
+ROUTINE Advent17.Day23
+#include helper
+start() public {
+  $$$input(lines)
+  set count = $$run(.lines)
+  w !,"part1 = ",count
+  set count = $$runOptimized()
+  w !,"part2 = ",count
+}
+run(&code) public {
+  set count = 0
+
+  set pos=1
+  for {
+    set line = $g(code(pos))
+    quit:line=""
+    set $lb(cmd, op1, op2) = $lfs(line, " ")
+    set v1 = $s(op1'=+op1: $g(regs(op1),0), 1: op1)
+    set v2 = $s(op2'=+op2: $g(regs(op2),0), 1: op2)
+    set regs(op1) = $g(regs(op1), 0)
+    if cmd="set" {
+      set regs(op1) = v2
+    } elseif cmd="add" {
+      set regs(op1) = v1 + v2
+    } elseif cmd="sub" {
+      set regs(op1) = v1 - v2
+    } elseif cmd="mul" {
+      set regs(op1) = v1 * v2
+      set count = count + 1
+    } elseif cmd="mod" {
+      set regs(op1) = v1 # v2
+    } elseif cmd="jnz",v1'=0 {
+      set pos = pos + v2
+      continue
+    }
+
+    set pos=pos + 1
+  }
+
+  quit count
+}
+runOptimized() {
+  set h = 0
+  set b = 81
+  set c = b
+  set b = b * 100
+  set b = b + 100000
+  set c = b + 17000
+
+  for b=b:17:c {
+    set f = 1
+    set d = 2
+
+    for d=d:1:b-1 {
+      continue:(b#d)
+      set f = 0
+      set h = h + 1
+      quit
+    }
+  }
+
+  return h
+}
