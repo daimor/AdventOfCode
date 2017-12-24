@@ -1,0 +1,45 @@
+ROUTINE Advent17.Day24
+#include helper
+start() public {
+  #; we need more memory
+  set $zs = 300*1024
+  $$$input(lines)
+  set parts = ""
+  while $$$nextLine(lines, line) {
+    set tmp = $lfs(line, "/")
+    set parts = parts _ $lb(tmp)
+  }
+  do bridges("", 0, parts, .all)
+  set max = 0
+  set len = 0, lmax = 0
+  for i=1:1:all {
+    set tmp = all(i)
+    set sum = 0
+    for j=1:1:$ll(tmp) {
+      set sum = sum + $lg(tmp,j)
+    }
+    if sum>max set max = sum
+    if j>=len,sum>lmax set len=j,lmax=sum
+  }
+  w !,"part1 = ",max
+  w !,"part2 = ",lmax
+}
+bridges(base, port, parts, &all) {
+  set res = ""
+
+  for i=1:1:$ll(parts) {
+    set tmp = $lg(parts, i)
+    continue:'$lf(tmp, port)
+    set left = $$remove(parts, tmp)
+    set ports = $$remove(tmp, port)
+    set all($i(all)) = $$bridges(base_tmp, $lg(ports), left, .all)
+  }
+  if res="" return base
+
+  quit res
+}
+remove(&list, item) {
+  set pos = $lf(list, item)
+  set $li(list, pos, pos) = ""
+  return list
+}
