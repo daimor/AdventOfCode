@@ -1,0 +1,39 @@
+ROUTINE Advent17.Day25
+#include helper
+start() public {
+  set state = "A"
+  set tape = 0
+  for i=1:1:12368930 {
+    set pos = tape
+    set value = $g(tape(pos), 0)
+    do run(.state, .value, .pos)
+    set tape(tape) = value
+    set tape = pos
+  }
+  set count = $$sum^helper(.tape)
+  write !,"checksum = ",count
+}
+run(&state, &value, &pos) {
+  set actions("A", 0)=$lb(1, 1, "B")
+  set actions("A", 1)=$lb(0, 1, "C")
+
+  set actions("B", 0)=$lb(0, -1, "A")
+  set actions("B", 1)=$lb(0, 1, "D")
+
+  set actions("C", 0)=$lb(1, 1, "D")
+  set actions("C", 1)=$lb(1, 1, "A")
+
+  set actions("D", 0)=$lb(1, -1, "E")
+  set actions("D", 1)=$lb(0, -1, "D")
+
+  set actions("E", 0)=$lb(1, 1, "F")
+  set actions("E", 1)=$lb(1, -1, "B")
+
+  set actions("F", 0)=$lb(1, 1, "A")
+  set actions("F", 1)=$lb(1, 1, "E")
+
+  set $lb(value, dir, state) = actions(state, value)
+  set pos = pos + dir
+
+  quit
+}
