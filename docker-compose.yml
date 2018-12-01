@@ -2,14 +2,12 @@ version: '3'
 
 services:
   cache:
-    build:
-      context: .
-      args:
-        CACHE_KEY: ${CACHE_KEY}
+    build: .
     ports:
       - 1972:1972
       - 57772:57772
     volumes:
+      - ~/cache.key:/usr/cachesys/mgr/cache.key
       - ./src:/opt/advent/src
       - ./input:/opt/advent/input:ro
     

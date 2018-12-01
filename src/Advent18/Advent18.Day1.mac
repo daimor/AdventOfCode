@@ -1,0 +1,19 @@
+ROUTINE Advent18.Day1
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2018/day1.txt")
+  set input = fs.Read(fs.Size)
+  write !,"task1 = ",@("0"_$tr(input, $c(10, 13), "+ "))
+  set input = $lfs($tr(input, $c(10, 13), ","))
+  set i = 1, max = $ll(input)
+  set sum = 0
+  for {
+    set sum = sum + $lg(input, i)
+    if $i(i),i>max set i = 1
+    quit:$data(was(sum))
+    set was(sum) = 1
+  }
+
+  write !,"task2 = ",sum
+
+  quit
