@@ -1,0 +1,47 @@
+ROUTINE Advent18.Day2
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2018/day2.txt")
+  set input = fs.Read(fs.Size)
+  set input = $lfs($tr(input, $c(10, 13), ","))
+  for i=1:1:$ll(input) {
+    set line = $lg(input, i)
+    set len = $l(line)
+    kill was
+    for c=$a("a"):1:$a("z") {
+      set count = len - $l($tr(line, $c(c)))
+      continue:count'>1
+      continue:$d(was(count))
+      if $i(counts(count))
+      set was(count) = i
+    }
+  }
+  write !,"Task 1 = ", counts(2)*counts(3)
+  write !,"Task 2 = ", $$task2(input)
+  quit
+task2(input) {
+  for i=1:1:$ll(input) {
+    set item = $lg(input, i)
+    set pos = $$search(input, item)
+    if pos {
+      set $e(item, pos) = ""
+      return item
+    }
+  }
+  return ""
+}
+search(list, item) {
+  set count = 0
+  for i=1:1:$ll(list) {
+    set tmp = $lg(list, i)
+    set count = 0
+    for j=1:1:$l(item) {
+      if $e(tmp, j)'=$e(item, j),$i(count) {
+        set pos = j
+      }
+      continue:count>1
+    }
+    if count=1 return pos
+  }
+  quit ""
+}
