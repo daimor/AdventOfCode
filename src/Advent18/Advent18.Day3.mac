@@ -1,0 +1,37 @@
+ROUTINE Advent18.Day3
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2018/day3.txt")
+  set input = fs.Read(fs.Size)
+  set input = $lfs($tr(input, $c(13)), $c(10))
+  for i=1:1:$ll(input) {
+    set line = $lg(input, i)
+    set $lb(n,x,y,w,h) = $lfs($tr(line, "@:x ", ",,,"))
+    set info(n)=$lb(x,y,w,h)
+    do fill(n,x,y,w,h)
+  }
+  zw same,only
+  quit
+fill(n,x,y,w,h) [field,same,only] {
+  for i=1:1:w {
+    for j=1:1:h {
+      set nx = x + i
+      set ny = y + j
+      set field(nx,ny,n)=1
+      set counter = $i(field(nx,ny))
+      if counter=2,$i(same)
+      if '$d(was(n)),counter=1 {
+        set only(n) = 1
+      }
+      set was(n) = 1
+      if counter>1 {
+        set tmp = ""
+        for {
+          set tmp = $o(field(nx,ny,tmp))
+          quit:tmp=""
+          kill only(tmp)
+        }
+      }
+    }
+  }
+}
