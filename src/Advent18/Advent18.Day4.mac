@@ -1,0 +1,75 @@
+ROUTINE Advent18.Day4
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2018/day4.txt")
+  set input = fs.Read(fs.Size)
+  set input = $lfs($tr(input, $c(13)), $c(10))
+  set guard = ""
+  set max = 0
+  set maxg= ""
+  set input = $$sort(input)
+  for i=1:1:$ll(input) {
+    set $lb(date,time,cmd) = $lg(input, i)
+    if $p(cmd, " ")="Guard" {
+      set guard = $tr($p(cmd, " ", 2), "#")
+      continue
+    }
+    if cmd = "falls asleep" {
+      set log(guard, date, time) = ""
+    } else {
+      set start = $o(log(guard, date, time), -1)
+      set long = time - start
+      if $i(log(guard), long)
+      for j=start:1:time-1 {
+        if $i(maxInTime(guard, j)) {
+          if (maxInTime(guard, j)>$g(maxInTime(guard))) {
+            set maxInTime(guard) = maxInTime(guard, j)
+            set maxInTime(guard,"time") = j
+          }
+        }
+      }
+      if log(guard)>max {
+        set max = log(guard)
+        set maxg = guard
+      }
+    }
+  }
+  write !,"task 1 = ",maxg*maxInTime(maxg,"time")
+
+  set guard = ""
+  set max = 0,maxg = ""
+  for {
+    set guard = $o(maxInTime(guard), 1, cnt)
+    quit:guard=""
+    if cnt>max {
+      set max = cnt
+      set maxg = guard
+      set maxt = maxInTime(guard, "time")
+    }
+  }
+  write !,"task 2 = ", maxt*maxg
+  quit
+sort(input) {
+  set sorted = ""
+  for i=1:1:$ll(input) {
+    set $lb(dt,cmd) = $lfs($lg(input, i), "] ")
+    set dt = $replace($tr(dt, "[]"), "1518", "2018")
+    set date = $p(dt, " ")
+    set time = $zth($p(dt, " ", 2)) / 60
+    set sort(date, time) = cmd
+  }
+  set date = ""
+  for {
+    set date = $order(sort(date))
+    quit:date=""
+    for time = ""
+    for {
+      set time = $order(sort(date, time), 1, cmd)
+      quit:time=""
+      set sorted = sorted _ $lb($lb(date, time, cmd))
+    }
+  }
+  quit sorted
+}
+find() [maxInTime] public {
+}
