@@ -1,0 +1,61 @@
+ROUTINE Advent18.Day5
+  kill
+  set fs = ##Class(%Stream.FileCharacter).%New()
+  set sc=fs.LinkToFile("/opt/advent/input/2018/day5.txt")
+  set input = fs.Read(fs.Size)
+
+  set result = $$remove(input)
+  write !,"task 1 = ", $l(result)
+
+  set min = 1e13
+  for i=$a("a"):1:$a("z") {
+    set c = $c(i)
+    set cu = $zcvt(c, "U")
+    set regex = ##class(%Regex.Matcher).%New("["_c_cu_"]", input)
+    set tmpinput = regex.ReplaceAll("")
+    set result = $$remove(tmpinput)
+    set len = $l(result)
+    write !,c," - ",$l(tmpinput)," - ",len
+    if min>len set min = len
+  }
+  write !,"task 2 = ",min
+  quit
+regex() public {
+  set string = ""
+  for i=$a("a"):1:$a("z") {
+    set c = $c(i)
+    set cu = $zcvt(c, "U")
+    set string = string _ $lb(""_c_cu_"")
+    set string = string _ $lb(""_cu_c_"")
+  }
+  set regex = $lts(string, "|")
+
+  quit ##class(%Regex.Matcher).%New(regex)
+}
+remove(input) {
+  set result = input
+  do {
+    set found = 0
+    for i=1:1 {
+      quit:i>=$l(result)
+      set tmp = $e(result, i, i+1)
+      set cl = $zcvt($e(tmp), "l")
+      set cu = $zcvt($e(tmp), "u")
+      if ((cl_cu)=tmp)||((cu_cl)=tmp) {
+        set $e(result, i, i + 1) = ""
+        set found = 1
+      }
+    }
+  } while found
+  return result
+}
+removeReg(input) {
+  set result = ""
+  set regex = $$regex()
+  set regex.Text = input
+  while regex.Locate() {
+    set result = regex.ReplaceAll("")
+    set regex.Text = result
+  }
+  return result
+}
