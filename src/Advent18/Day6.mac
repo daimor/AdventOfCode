@@ -1,0 +1,59 @@
+ROUTINE Advent18.Day6
+#include helper
+Start()
+  kill
+  $$$inputAll(input)
+  set count = $ll(input)
+  set maxX = 0, maxY = 0
+  for i=1:1:count {
+    set $lb(x, y) = $lfs($tr($lg(input, i), " "))
+    if x>maxX set maxX = x
+    if y>maxY set maxY = y
+    set list(i) = $lb(x, y)
+  }
+  for i=-maxX+10:1:maxX+10 {
+    for j=-maxY+10:1:maxY+10 {
+      set minDist = 1e13
+      set eq = 0
+      set idx = 0
+      for k=1:1:count {
+        set $lb(x,y) = list(k)
+        set curDist = $zabs(x-i) + $zabs(y-j)
+        if curDist<minDist {
+          set minDist = curDist
+          set idx = k
+          set eq = 0
+          if ($zabs(x-i)>maxX)&&($zabs(y-j)>maxY) set inf(k)=1
+        } elseif curDist=minDist {
+          set eq = 1
+        }
+      }
+      if eq=0,$i(cnt(idx))
+
+      set totalDist = 0
+      for k=1:1:count {
+        set $lb(x,y) = list(k)
+        set curDist = $zabs(x - i) + $zabs(y - j)
+        if $i(totalDist, curDist)
+      }
+      if totalDist<10000,$i(answ)
+    }
+  }
+  for i=1:1:count {
+    if $g(inf(i))||(cnt(i)>10000) kill cnt(i)
+  }
+  do sort(.cnt)
+
+  write !!,"Part 2 = ",answ
+  quit
+
+sort(&counts) public {
+  set min = 1e13
+  quit:'$d(counts)
+  for i=1:1:$o(counts(""), -1) {
+    if min>$g(counts(i), 1e13) set min = counts(i),idx=i
+  }
+  kill counts(idx)
+  write !,idx," - ",min
+  do sort(.counts)
+}
