@@ -1,0 +1,72 @@
+ROUTINE Advent18.Day7
+#include helper
+Start() public {
+ $$$input(lines)
+ while $$$nextLine(lines,input) {
+    set input = $replace(input, " must be finished before step", "")
+    set input = $replace(input, " can begin.", "")
+    set input = $replace(input, "Step ", "")
+    set $lb(before, next) = $lfs(input, " ")
+
+    set deps(next) = $g(deps(next)) _ $lb(before)
+  }
+  set input = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+  set done = ""
+  while input'="" {
+    for i=1:1 {
+      quit:i>$l(input)
+      set c = $e(input, i)
+      set ptr = 0, yes = 1
+      while $listnext($g(deps(c)), ptr, d) {
+        set yes = $find(done, d)
+        quit:'yes
+      }
+      if yes {
+        set done = done_c
+        set $e(input, i, i) = ""
+        quit
+      }
+    }
+  }
+  write !,"Part1 = ",done,!!
+
+  set input = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  set busy = $lb(0, 0, 0, 0, 0)
+  set time = 0
+  while input'="" {
+    for i=1:1 {
+      quit:i>$l(input)
+      set skipped = 0
+      set c = $e(input, i)
+      set ptr = 0, yes = 1
+      while $listnext($g(deps(c)), ptr, d) {
+        set yes = ($d(doneTime(d))&&(doneTime(d)<=time))
+        quit:'yes
+      }
+      if yes {
+        for ib=1:1:$ll(busy) {
+          set t = $lg(busy, ib)
+          if t<=time {
+            set $li(busy, ib) = time + 60 + $a(c) - 64
+            set doneTime(c) = $lg(busy, ib)
+            quit
+          }
+        }
+        write !,c," - ",time, " - ",doneTime(c)
+        set $e(input, i, i) = ""
+        quit
+      }
+      set skipped = 1
+    }
+    if skipped {
+      set ptr = 0, min = 1e13
+      while $listnext(busy, ptr, t) {
+        if t>time,t<min set min = t
+      }
+      set time = min
+    }
+  }
+
+  write !,"Part2 = ",$$$max(busy)
+}
