@@ -9,5 +9,5 @@ services:
     volumes:
       - ~/cache.key:/usr/cachesys/mgr/cache.key
       - ./src:/opt/advent/src
-      - ./input:/opt/advent/input:ro
+      - ./input:/opt/advent/input
     

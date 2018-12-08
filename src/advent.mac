@@ -1,0 +1,55 @@
+ROUTINE advent
+Start() public {
+  set $lb(mon,day,year) = $lfs($zd($h), "/")
+  if mon'=12 quit
+  set day = +day
+  set yy = $e(year, 3, 4)
+  set rtnName = "Advent"_yy_".Day"_day
+  write !,year," - ",day,!,"----------",!!
+  if '##class(%Routine).%ExistsId(rtnName) {
+    do newDay(year, day)
+  }
+  try {
+    do @("^"_rtnName)
+  } catch {
+    w $ze
+  }
+  quit
+}
+newDay(year,day) public {
+  set ht=##class(%Net.HttpRequest).%New()
+  set ht.Server = "adventofcode.com"
+  set ht.Https = 1
+  set ht.SSLConfiguration = $$cert(ht.Server)
+  do ht.InsertCookie("session", $g(^AdventSession), "/", ht.Server, $h+10)
+  set sc = ht.Get("/"_year_"/day/"_day_"/input")
+  if ht.HttpResponse.StatusCode=200 {
+    set fs = ##class(%Stream.FileCharacter).%New()
+    do fs.LinkToFile("/opt/advent/input/"_year_"/day"_day_".txt")
+    do fs.CopyFromAndSave(ht.HttpResponse.Data)
+    write !,"Input file: ",fs.Filename," - ",fs.Size
+  }
+
+  set yy = $e(year, *-1, *)
+  set fs = ##class(%Stream.FileCharacter).%New()
+  do fs.LinkToFile("/opt/advent/src/Advent"_yy_"/Day"_day_".mac")
+  do fs.WriteLine("ROUTINE Advent"_yy_".Day"_day)
+  do fs.WriteLine("#include helper")
+  do fs.WriteLine("Start() public {")
+  do fs.WriteLine("  // $$$inputAll(input)")
+  do fs.WriteLine("  // $$$inputFull(input)")
+  do fs.WriteLine("  // $$$input(lines)")
+  do fs.WriteLine("}")
+  if fs.%Save() {
+    do $system.OBJ.Load(fs.Filename, "ck")
+  }
+}
+cert(host) public {
+  new $namespace
+  set $namespace = "%SYS"
+  if ##class(Security.SSLConfigs).Exists(host) quit host
+  set cert = ##class(Security.SSLConfigs).%New()
+  set cert.Name = host
+  do cert.%Save()
+  quit host
+}

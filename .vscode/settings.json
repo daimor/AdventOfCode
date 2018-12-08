@@ -1,5 +1,5 @@
 {
-  "cos.conn": {
+  "objectscript.conn": {
     "port": 57772,
     "ns": "USER"
   }

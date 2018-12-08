@@ -1,8 +1,7 @@
 ROUTINE Advent18.Day5
-  kill
-  set fs = ##Class(%Stream.FileCharacter).%New()
-  set sc=fs.LinkToFile("/opt/advent/input/2018/day5.txt")
-  set input = fs.Read(fs.Size)
+#include helper
+Start() public {
+  $$$inputFull(input)
 
   set result = $$remove(input)
   write !,"task 1 = ", $l(result)
@@ -19,7 +18,7 @@ ROUTINE Advent18.Day5
     if min>len set min = len
   }
   write !,"task 2 = ",min
-  quit
+}
 regex() public {
   set string = ""
   for i=$a("a"):1:$a("z") {
