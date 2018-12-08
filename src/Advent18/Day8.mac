@@ -1,0 +1,35 @@
+ROUTINE Advent18.Day8
+#include helper
+Start() [allMeta] public {
+  $$$inputAll(input)
+  set input = $lfs($lg(input), " ")
+
+  set allMeta = 0
+  set result = $$run(input, 0, .allMeta)
+  write !,"Part1 = ", allMeta
+  write !,"Part2 = ", result
+}
+run(input, ind, &allMeta) {
+
+  set children = $lg(input, $i(ind))
+  set meta = $lg(input, $i(ind))
+
+  set vals = ""
+  for j=1:1:children {
+    set val = $$run(input, .ind, .allMeta)
+    set $li(vals, j) = val
+  }
+  set metaSum = 0, currMeta = 0
+  for m=1:1:meta {
+    set tmp = $lg(input, $i(ind))
+    set allMeta = allMeta + tmp
+    set currMeta = currMeta + tmp
+    set metaSum = metaSum + $lg(vals, tmp, 0)
+  }
+
+  if (children) {
+    return metaSum
+  } else {
+    return currMeta
+  }
+}
