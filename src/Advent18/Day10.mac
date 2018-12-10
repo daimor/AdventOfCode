@@ -9,13 +9,13 @@ Start() [sky] public {
     set line=$zstrip(line, "*AW")
     set $lb(,x,y,vx,vy) = $lfs(line)
     set points($i(points)) = $lb(x,y,vx,vy)
-    set sky(x,y)=i
+    set sky(y,x)=i
   }
   for time=1:1 {
-    set height = $$move(.sky, .points)
+    set $lb(height, topX, topY) = $$move(.sky, .points)
     quit:height<10
   }
-  do show(.sky)
+  do show(.sky, topX, topY)
   write !,"time = ",time
 }
 move(&sky, &points) {
@@ -23,29 +23,29 @@ move(&sky, &points) {
   set (maxX, maxY) = 0
   for i=1:1:points {
     set $lb(x,y, vx,vy) = points(i)
-    kill sky(x,y)
+    kill sky(y, x)
     set x = x + vx
     set y = y + vy
-    set sky(x, y) = i
+    set sky(y, x) = i
     set $li(points(i), 1, 2) = $lb(x, y)
     if x>maxX set maxX = x
     if x<minX set minX = x
     if y>maxY set maxY = y
     if y<minY set minY = y
   }
-  quit maxY-minY
+  quit $lb(maxY-minY, minX, minY)
 }
-show(&sky) public {
-  set x = ""
+show(&sky, topX, topY) public {
+  set y = ""
   for {
-    set x = $order(sky(x))
-    quit:x=""
+    set y = $order(sky(y))
+    quit:y=""
     write !
-    set y = ""
+    set x = ""
     for {
-      set y = $order(sky(x,y))
-      quit:y=""
-      write ?y,"*"
+      set x = $order(sky(y,x))
+      quit:x=""
+      write ?x-topX,"#"
     }
   }
 }
