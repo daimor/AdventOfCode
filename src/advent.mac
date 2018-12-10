@@ -36,9 +36,9 @@ newDay(year,day) public {
   do fs.WriteLine("ROUTINE Advent"_yy_".Day"_day)
   do fs.WriteLine("#include helper")
   do fs.WriteLine("Start() public {")
-  do fs.WriteLine("  // $$$inputAll(input)")
-  do fs.WriteLine("  // $$$inputFull(input)")
-  do fs.WriteLine("  // $$$input(lines)")
+  do fs.WriteLine("  #; $$$inputAll(input)")
+  do fs.WriteLine("  #; $$$inputFull(input)")
+  do fs.WriteLine("  #; $$$input(lines)")
   do fs.WriteLine("}")
   if fs.%Save() {
     do $system.OBJ.Load(fs.Filename, "ck")
