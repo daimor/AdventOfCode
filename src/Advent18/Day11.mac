@@ -1,0 +1,58 @@
+ROUTINE Advent18.Day11
+#include helper
+Start() [map] public {
+  kill map
+  set serial = 4455
+  #; set serial = 18
+  for x=1:1:300 {
+    for y=1:1:300 {
+      set map(x, y) = $$level(x, y, serial)
+    }
+  }
+  set result = $$find(3)
+  set $LISTBUILD(maxSize, max, maxX, maxY) = result
+  write !,"Part 1 - ",$LISTTOSTRING($LISTBUILD(maxX, maxY))
+
+  set maxSize = ""
+  set max = 0
+  set maxX = 0
+  set maxY = 0
+  for i=1:1:299 {
+    set result = $$find(i)
+    if max < $LISTGET(result, 2) {
+      set $LISTBUILD(maxSize, max, maxX, maxY) = result
+      write !?5,$LISTTOSTRING($LISTBUILD(maxX, maxY, maxSize))," - ",max
+    }
+    quit:'$LISTGET(result, 2)
+  }
+  write !!,"Part 2 - ",$LISTTOSTRING($LISTBUILD(maxX, maxY, maxSize))
+}
+find(size) [map] public {
+  set max = 0
+  set maxX = 0
+  set maxY = 0
+  for x=1:1:300-size {
+    for y=1:1:300-size {
+      set summ = 0
+      for dx=x:1:x-1+size {
+        for dy=y:1:y-1+size {
+          set summ = summ + map(dx, dy)
+        }
+      }
+      if summ > max {
+        set max = summ
+        set maxX = x
+        set maxY = y
+      }
+    }
+  }
+  return $LISTBUILD(size, max, maxX, maxY)
+}
+level(x, y, serial) public {
+  set rackId = x + 10
+  set power = rackId * y
+  set power = power + serial
+  set power = power * rackId
+  set power = $e(power, *-2)
+  return power - 5
+}

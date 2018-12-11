@@ -1,13 +1,12 @@
 version: '3'
 
 services:
-  cache:
+  iris:
     build: .
     ports:
-      - 1972:1972
-      - 57772:57772
+      - 52773:52773
     volumes:
-      - ~/cache.key:/usr/cachesys/mgr/cache.key
+      - ~/irisdocker.key:/usr/irissys/mgr/iris.key
       - ./src:/opt/advent/src
       - ./input:/opt/advent/input
     
