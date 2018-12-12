@@ -1,6 +1,7 @@
 {
   "objectscript.conn": {
     "port": 52773,
-    "ns": "USER"
-  }
+    "ns": "ADVENT"
+  },
+  "python.linting.pylintEnabled": false
 }
