@@ -1,0 +1,82 @@
+ROUTINE Advent18.Day13
+#include helper
+Start() [input] public {
+  $$$input(lines)
+  set y = 0
+  set cards = ""
+  while $$$nextLine(lines, line) {
+    for x=0:1:$LENGTH(line)-1 {
+      set cell = $EXTRACT(line, x+1)
+      set input(x, y) = cell
+      if $FIND("^v<>", cell) {
+        set cards = cards _ $LISTBUILD($LISTBUILD(x, y, cell, 0))
+      }
+    }
+    set y = y + 1
+  }
+  set part1 = 0
+  for {
+    set crashes = ""
+    set newCards = ""
+    set ptr = 0
+    set len = $LISTLENGTH(cards)
+    set cards = $$sort(cards)
+    for k=1:1:len {
+      set card = $LISTGET(cards, k)
+      set $LISTBUILD(x, y, way, dir) = card
+      set nx = x, ny = y
+      if way = "^", $INCREMENT(ny, -1)
+      if way = "v", $INCREMENT(ny, 1)
+      if way = "<", $INCREMENT(nx, -1)
+      if way = ">", $INCREMENT(nx, 1)
+      for ki=1:1:$LISTLENGTH(cards) {
+        set tmpCard = $LISTGET(cards, ki)
+        if $LIST(tmpCard, 1, 2) = $LISTBUILD(nx, ny) {
+          if 'part1 {
+            write !,"Part1 = ",nx,",",ny
+            set part1 = 1
+          }
+          write !,"Crash ",nx,",",ny
+          set crashes = crashes _ $LISTBUILD(k, ki)
+        }
+      }
+      set cell = input(nx, ny)
+      if cell="+" {
+        set ways = "<^>v"
+        set way = $EXTRACT(ways_ways, $FIND(ways, way) + (dir + 2 # 4))
+        set dir = (dir + 1 # 3)
+      } else {
+        set way = $case(way_cell,
+          "^/": ">", "v/": "<", ">/": "^", "</": "v",
+          "^\": "<", "v\": ">", ">\": "v", "<\": "^",
+          :way)
+      }
+      set $LIST(cards, k) = $LISTBUILD(nx, ny, way, dir)
+    }
+    set newCards = ""
+    for i=1:1:$LISTLENGTH(cards) {
+      if '$LISTFIND(crashes, i) {
+        set newCards = newCards _ $LISTBUILD($LISTGET(cards, i))
+      }
+    }
+    set cards = newCards
+    quit:$LISTLENGTH(cards)<2
+  }
+  set lastCard = $LISTGET(cards, 1)
+  set $LISTBUILD(x, y) = lastCard
+  write !!,"Part2 ",x,",",y
+}
+sort(cards) {
+  set sorted = ""
+  for i=1:1:$LISTLENGTH(cards) {
+    set tmpCard = $LISTGET(cards, i)
+    set temp($LIST(tmpCard, 1, 2)) = tmpCard
+  }
+  set ind = ""
+  for {
+    set ind = $ORDER(temp(ind), 1, tmpCard)
+    quit:ind=""
+    set sorted = sorted _ $LISTBUILD(tmpCard)
+  }
+  quit sorted
+}
