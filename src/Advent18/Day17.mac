@@ -1,0 +1,127 @@
+ROUTINE Advent18.Day17
+#include helper
+Start() [map,water,maxY,was] public {
+  kill map,water,maxY,was
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  set (minX,minY) = 1e13
+  set (maxX,maxY) = -1
+  while $$$nextLine(lines, line) {
+    set $LISTBUILD(part1, part2) = $LISTFROMSTRING(line, ", ")
+    if part1["x" {
+      set (x,xs,xe) = $PIECE(part1, "=", 2)
+      set $LISTBUILD(ys, ye) = $LISTFROMSTRING($PIECE(part2, "=", 2), "..")
+      for y=ys:1:ye {
+        set map(y, x) = "#"
+      }
+    }
+    if part1["y" {
+      set (y,ys,ye) = $PIECE(part1, "=", 2)
+      set $LISTBUILD(xs, xe) = $LISTFROMSTRING($PIECE(part2, "=", 2), "..")
+      for x=xs:1:xe {
+        set map(y, x) = "#"
+      }
+    }
+    if ye>maxY set maxY = ye
+    if ys<minY set minY = ys
+    if xe>maxX set maxX = xe
+    if xs<minX set minX = xs
+  }
+  set maxX = maxX + 3
+  set minX = minX - 3
+  set w = maxX - minX
+  set h = maxY - minY
+  set map(0, 500) = "+"
+  #; do stream(.map, 498, 7, maxY)
+  do stream(500, 0)
+  do show(minX, minY, w, h)
+}
+show(tx, ty, w, h) [map, water] {
+  set fs = ##class(%Stream.FileCharacter).%New()
+  set fs.Filename = "/opt/advent/input/2018/day17map.txt"
+  set count = 0
+  for y=ty:1:ty+h {
+    set str = ""
+    for x=tx:1:tx+w {
+      set ch = $GET(map(y, x), $GET(water(y, x), "."))
+      set str = str _ ch
+    }
+    set str = ##class(%Regex.Matcher).%New("\|\.\|(?!\.)", str).ReplaceAll("|||")
+    while str["|~" {
+      set str = $REPLACE(str, "|~", "~~")
+    }
+    set cnt = $LENGTH(str) - $LENGTH($TRANSLATE(str, "|~"))
+    if $INCREMENT(count, cnt)
+    set cnt = $LENGTH(str) - $LENGTH($TRANSLATE(str, "~"))
+    if $INCREMENT(count2, cnt)
+    do fs.WriteLine(str)
+  }
+  do fs.%Save()
+  w !!
+  write !,"Part1 = ",count
+  write !,"Part2 = ",count2
+}
+stream(sx, sy) [map,water,maxY,was] {
+  set maxX = 0
+  set y = sy
+  #; write !,"stream ", sy, ":", sx
+  quit:$DATA(was(sy, sx))
+  set was(sy, sx) = 1
+  while (y<=maxY)&&('$DATA(map($INCREMENT(y), sx))) {
+    set water(y, sx) = "|"
+  }
+  quit:y>maxY
+  quit:'$DATA(map(y, sx), d)
+  do edges(sx, y)
+}
+edges(sx, sy) [map,water,maxY,was]  {
+  set y = sy - 1
+  #; write !,"edges ",y,":",sx
+  for {
+    set leftX = $ORDER(map(y, sx), -1, left)
+    set rightX = $ORDER(map(y, sx), 1, right)
+    set overflow = 1
+    if $GET(left)="#",$GET(right)="#",leftX,rightX {
+      set overflow = 0
+      for x=leftX:1:rightX {
+        continue:$DATA(map(y + 1, x))
+        continue:$GET(water(y + 1, x))="~"
+        set overflow = 1
+        quit
+      }
+      if 'overflow {
+        for x=leftX+1:1:rightX-1 {
+          set water(y, x) = "~"
+        }
+        set y = y -1
+      }
+    }
+    quit:overflow
+  }
+  do overflow(sx, y)
+}
+overflow(sx, sy) [map,water,maxY,was] {
+  #; write !,"Overflow: ",sy,"x",sx
+  set y = sy
+  for x=sx+1:1 {
+    quit:$DATA(map(y, x))
+    if $DATA(map(y + 1, x))||($GET(water(y + 1, x))="~") {
+      set water(y, x) = "|"
+    } else {
+      set water(y, x) = "|"
+      do stream(x, y)
+      quit
+    }
+  }
+  for x=sx-1:-1 {
+    quit:$DATA(map(y, x))
+    if $DATA(map(y + 1, x))||($GET(water(y + 1, x))="~") {
+      set water(y, x) = "|"
+    } else {
+      set water(y, x) = "|"
+      do stream(x, y)
+      quit
+    }
+  }
+}
