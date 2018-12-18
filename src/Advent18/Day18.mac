@@ -1,0 +1,70 @@
+ROUTINE Advent18.Day18
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  SET prev = 0
+  SET part1 = ""
+  SET part2 = ""
+  FOR i=1:1:1000 {
+    DO magic(.lines, .counts)
+    SET resources = counts("#") * counts("|")
+    IF i=10 {
+      SET part1 = resources
+      WRITE !,"Part1 = ",part1,!
+    }
+    IF $INCREMENT(was(resources))>1 {
+      IF was(resources)>2 {
+        SET prev = was(resources, "prev")
+        IF prev'="",(1000000000-prev#(i-prev))=0 {
+          SET part2 = resources
+          WRITE !,"Part2 = ",part2,!
+          QUIT
+        }
+      }
+      SET was(resources, "prev") = i
+    }
+  }
+}
+magic(&map, &counts) {
+  SET height = map
+  SET width = $LENGTH(map(1))
+  KILL counts
+  FOR y=1:1:height {
+    SET line = map(y)
+    SET newLine = ""
+    FOR x=1:1:width {
+      SET acre = $EXTRACT(line, x)
+      SET prevLine = $GET(map(y - 1))
+      SET nextLine = $GET(map(y + 1))
+      SET adjacent = $EXTRACT(line, x - 1)_$EXTRACT(line, x + 1)
+      SET adjacent = adjacent _ $EXTRACT(prevLine, x - 1)_$EXTRACT(prevLine, x)_$EXTRACT(prevLine, x + 1)
+      SET adjacent = adjacent _ $EXTRACT(nextLine, x - 1)_$EXTRACT(nextLine, x)_$EXTRACT(nextLine, x + 1)
+      IF acre="." {
+        SET newAcre = acre
+        IF $LENGTH($ZSTRIP(adjacent,"*E",,"|"))>2 {
+          SET newAcre = "|"
+        }
+      }
+      IF acre="|" {
+        SET newAcre = acre
+        IF $LENGTH($ZSTRIP(adjacent,"*E",,"#"))>2 {
+          SET newAcre = "#"
+        }
+      }
+      IF acre="#" {
+        IF adjacent["|",adjacent["#" {
+          SET newAcre = "#"
+        } ELSE {
+          SET newAcre = "."
+        }
+      }
+      SET newLine = newLine_newAcre
+    }
+    SET newMap($INCREMENT(newMap)) = newLine
+    IF $INCREMENT(counts("#"), $LENGTH($ZSTRIP(newLine,"*E",,"#")))
+    IF $INCREMENT(counts("|"), $LENGTH($ZSTRIP(newLine,"*E",,"|")))
+  }
+  MERGE map = newMap
+}
