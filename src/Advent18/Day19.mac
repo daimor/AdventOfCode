@@ -1,0 +1,59 @@
+ROUTINE Advent18.Day19
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  SET ipr = 0
+  IF $$$nextLine(lines, line) {
+    SET ipr = +$PIECE(line, "ip ", 2) + 1
+  }
+
+  SET commands = 0
+  WHILE $$$nextLine(lines, line) {
+    SET commands(commands) = $LISTFROMSTRING(line, " ")
+    SET commands = commands + 1
+  }
+  SET commands = commands - 1
+
+  SET registers = $LISTBUILD(0, 0, 0, 0, 0, 0)
+  set part1 = $$execute(.commands, registers, ipr)
+  WRITE !,"Part1 = ",$$sum(part1)
+
+  SET $LIST(registers) = 1
+  set part2 = $$execute(.commands, registers, ipr)
+  WRITE !,"Part2 = ",$$sum(part2)
+}
+execute(&commands, registers, ipr) {
+  TRY {
+    FOR {
+      SET ip = $LISTGET(registers, ipr)
+      SET line = commands(ip)
+      #; WRITE !,ip,": [",$LISTTOSTRING(registers, ", "),"] ",$LISTTOSTRING(line, " ")
+      SET $LISTBUILD(oper, a, b, c) = line
+      SET registers = $$run(oper, registers, a, b, c)
+      #; WRITE " [",$LISTTOSTRING(registers,", "),"]"
+      SET $LIST(registers, ipr) = $LIST(registers, ipr) + 1
+      QUIT:'$DATA(commands($LIST(registers, ipr)))
+      IF ip=1 {
+        RETURN $LIST(registers, 4)
+      }
+    }
+  } CATCH ex {
+    WRITE !,"ERROR: ",ex.DisplayString()
+  }
+  ZWRITE registers
+  RETURN $LISTGET(registers)
+}
+run(oper, registers, a, b, c) [result] public {
+  SET run ="result=$$"_oper_"^Advent18.Day16($LB("_$LISTTOSTRING(registers, ", ")_") , "_a_", "_b_", "_c_")"
+  SET @(run)
+  QUIT result
+}
+sum(num) public {
+  SET sum = 0
+  FOR i=1:1:num {
+    IF num#i=0, $i(sum, i)
+  }
+  QUIT sum
+}
