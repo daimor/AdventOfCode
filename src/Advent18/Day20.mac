@@ -1,0 +1,70 @@
+ROUTINE Advent18.Day20
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  $$$inputFull(input)
+  #; $$$input(lines)
+
+  #; WRITE !,$$path("ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))")
+  #; WRITE !,$$path("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$")
+  set $LISTBUILD(part1, part2) = $$solve(input)
+  WRITE !,"Part1 = ",part1
+  WRITE !,"Part2 = ",part2
+}
+solve(input) {
+  SET input = $ZSTRIP(input, "<>WC", "^$")
+
+  SET doors = 0
+  SET ways = ""
+  SET current = $LISTBUILD(0, 0, 0)
+  SET stack = $LISTBUILD(current)
+
+  FOR i=1:1:$LENGTH(input) {
+    SET c = $EXTRACT(input, i)
+
+    SET (dx,dy)=0
+    IF c="N" set dy = -1
+    IF c="S" set dy = 1
+    IF c="E" set dx = 1
+    IF c="W" set dx = -1
+    IF dx||dy {
+      SET $LISTBUILD(x, y, dist) = current
+      SET y = y + dy
+      SET x = x + dx
+      SET mapDist = $GET(map(y, x))
+      SET dist = $SELECT(mapDist: mapDist, 1: dist + 1)
+      SET map(y, x) = dist
+      if dist > doors set doors = dist
+      SET current = $LISTBUILD(x, y, dist)
+      set $LIST(stack, *) = current
+      CONTINUE
+    }
+    IF c="(" {
+      SET stack = stack_ $LISTBUILD(current)
+    }
+    ELSEIF c="|" {
+      set current = $LIST(stack, * - 1)
+    }
+    ELSEIF c=")" {
+      set current = $LIST(stack, * - 1)
+      set $LIST(stack, *, *) = ""
+    }
+
+    set rooms = 0
+    set y=""
+    FOR  {
+      set y = $ORDER(map(y))
+      QUIT:y=""
+      set x = ""
+      FOR  {
+        set x = $ORDER(map(y, x), 1, dist)
+        QUIT:x=""
+        CONTINUE:dist<1000
+        set rooms = rooms + 1
+      }
+
+    }
+
+  }
+  RETURN $lb(doors, rooms)
+}
