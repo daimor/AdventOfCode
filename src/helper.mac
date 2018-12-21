@@ -1,110 +1,133 @@
 ROUTINE helper
 knot(str) public {
-  set lengths = ""
-  for i=1:1:$l(str) {
-    set lengths = lengths _ $lb($a(str, i))
+  SET lengths = ""
+  FOR i=1:1:$l(str) {
+    SET lengths = lengths _ $lb($a(str, i))
   }
-  set lengths = lengths _ $lb(17, 31, 73, 47, 23)
-  set hash=$$knot^Advent17.Day10(.data, lengths, 256, 64)
-  return hash
+  SET lengths = lengths _ $lb(17, 31, 73, 47, 23)
+  SET hash=$$knot^Advent17.Day10(.data, lengths, 256, 64)
+  RETURN hash
 }
 toBits(str) public {
-  set bits = ""
-  for i=1:1:$l(str) {
-    set c = $zhex($e(str, i))
-    set b = $factor(c)
-    for j=4:-1:1 {
-      set $bit(bits, $bitcount(bits) + 1) = $bit(b,j)
+  SET bits = ""
+  FOR i=1:1:$l(str) {
+    SET c = $zhex($e(str, i))
+    SET b = $factor(c)
+    FOR j=4:-1:1 {
+      SET $bit(bits, $bitcount(bits) + 1) = $bit(b,j)
     }
   }
-  return bits
+  RETURN bits
 }
 max(&list, &ind, delim = ",") public {
-  set max = -99999,ind=""
-  if $d(list)\10 {
-    set el=""
-    for {
-      set el=$o(list(el), 1, v)
-      quit:el=""
-      if $d(v),v>max {
-        set max=v,ind=el
-      } elseif '$d(v),el>max {
-        set max=el
+  SET max = -99999,ind=""
+  IF $d(list)\10 {
+    SET el=""
+    FOR {
+      SET el=$o(list(el), 1, v)
+      QUIT:el=""
+      IF $d(v),v>max {
+        SET max=v,ind=el
+      } ELSEIF '$d(v),el>max {
+        SET max=el
       }
     }
-  } else {
-    if '$lv(list) set list=$lfs(list, delim)
-    for i=1:1:$ll(list) {
-      set v = $lg(list, i)
-      if v>max set max=v,ind=i
+  } ELSE {
+    IF '$lv(list) set list=$lfs(list, delim)
+    FOR i=1:1:$ll(list) {
+      SET v = $lg(list, i)
+      IF v>max set max=v,ind=i
     }
   }
-  return max
+  RETURN max
 }
 min(&list, &ind, delim = ",") public {
-  set min = 99999999,ind=""
-  if $d(list)\10 {
-    set el=""
-    for {
-      set el=$o(list(el), 1, v)
-      quit:el=""
-      if $d(v),v<min {
-        set min=v,ind=el
-      } elseif '$d(v),el<min {
-        set min=el
+  SET min = 99999999,ind=""
+  IF $d(list)\10 {
+    SET el=""
+    FOR {
+      SET el=$o(list(el), 1, v)
+      QUIT:el=""
+      IF $d(v),v<min {
+        SET min=v,ind=el
+      } ELSEIF '$d(v),el<min {
+        SET min=el
       }
     }
-  } else {
-    if '$lv(list) set list=$lfs(list, delim)
-    for i=1:1:$ll(list) {
-      set v = $lg(list, i)
-      if v<min set min=v,ind=i
+  } ELSE {
+    IF '$lv(list) set list=$lfs(list, delim)
+    FOR i=1:1:$ll(list) {
+      SET v = $lg(list, i)
+      IF v<min set min=v,ind=i
     }
   }
-  return min
+  RETURN min
 }
 sum(list, delim = ",") public {
-  set sum = 0
-  if $d(list)\10 {
-    set el=""
-    for {
-      set el=$o(list(el), 1, v)
-      quit:el=""
-      if $i(sum, v)
+  SET sum = 0
+  IF $d(list)\10 {
+    SET el=""
+    FOR {
+      SET el=$o(list(el), 1, v)
+      QUIT:el=""
+      IF $i(sum, v)
     }
-  } else {
-    if '$lv(list) set list=$lfs(list, delim)
-    for i=1:1:$ll(list) {
-      set v = $lg(list, i)
-      if $i(sum, v)
+  } ELSE {
+    IF '$lv(list) set list=$lfs(list, delim)
+    FOR i=1:1:$ll(list) {
+      SET v = $lg(list, i)
+      IF $i(sum, v)
     }
   }
-  return sum
+  RETURN sum
 }
 sort(list) public {
-  for i=1:1:$l(list) {
-    set c = $e(list, i)
-    if $i(sort(c))
+  FOR i=1:1:$l(list) {
+    SET c = $e(list, i)
+    IF $i(sort(c))
   }
-  set res = ""
-  set c = ""
-  for {
-    set c = $o(sort(c), 1, cnt)
-    quit:c=""
-    set res = res _ $tr($j("", cnt), " ", c)
+  SET res = ""
+  SET c = ""
+  FOR {
+    SET c = $o(sort(c), 1, cnt)
+    QUIT:c=""
+    SET res = res _ $tr($j("", cnt), " ", c)
   }
-  return res
+  RETURN res
 }
 toHex(string) public {
-  set res = ""
-  for i=1:1:$l(string) {
-    set val = $a(string, i)
-    set hex = $zcvt($tr($j($zhex(val), 2), " ", "0"), "l")
-    set res = res_hex
+  SET res = ""
+  FOR i=1:1:$l(string) {
+    SET val = $a(string, i)
+    SET hex = $zcvt($tr($j($zhex(val), 2), " ", "0"), "l")
+    SET res = res_hex
   }
-  return res
+  RETURN res
 }
 insert(data, pos, val) public {
-  set val = $li(data, 1, pos)_$lb(val)_$li(data, pos + 1, $ll(data))
-  return val
+  SET val = $li(data, 1, pos)_$lb(val)_$li(data, pos + 1, $ll(data))
+  RETURN val
+}
+dec(bit, len = 32) public {
+  SET res = 0
+  FOR i=1:1:len {
+    CONTINUE:'$BIT(bit, i)
+    SET res = res + (2**(i-1))
+  }
+  RETURN res
+}
+and(a, b, len = 32) public {
+  SET a = $FACTOR(a)
+  SET b = $FACTOR(b)
+  RETURN $$dec($BITLOGIC(a&b, len))
+}
+or(a, b, len = 32) public {
+  SET a = $FACTOR(a)
+  SET b = $FACTOR(b)
+  RETURN $$dec($BITLOGIC(a|b, len))
+}
+xor(a, b, len = 32) public {
+  SET a = $FACTOR(a)
+  SET b = $FACTOR(b)
+  RETURN $$dec($BITLOGIC(a^b, len))
 }

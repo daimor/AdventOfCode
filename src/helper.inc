@@ -24,3 +24,7 @@ ROUTINE helper [Type=INC]
 #def1arg knot(%args) $$knot^helper(%args)
 #def1arg insert(%args) $$insert^helper(%args)
 
+#def1arg and(%args) $$and^helper(%args)
+#def1arg or(%args) $$or^helper(%args)
+#def1arg xor(%args) $$xor^helper(%args)
+

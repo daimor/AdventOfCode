@@ -1,0 +1,39 @@
+ROUTINE Advent18.Day21
+#include helper
+Start() public {
+  $$$input(lines)
+  SET ipr = 0
+  IF $$$nextLine(lines, line) {
+    SET ipr = +$PIECE(line, "ip ", 2) + 1
+  }
+
+  SET d = 0
+  SET part1 = 0
+  SET part2 = 0
+  FOR i=1:1:100000 {
+    SET e = $$$or(d, 65536)
+    SET d = 14906355
+    FOR  {
+      SET c = $$$and(e, 255)
+      SET d = d + c
+      SET d = $$$and(d, 16777215)
+      SET d = d * 65899
+      SET d = $$$and(d, 16777215)
+      IF e<256 {
+        IF 'part1 {
+          WRITE !,"Part1 = ",d
+          SET part1 = 1
+          #; RETURN
+        }
+        ELSEIF '$DATA(was(d)) {
+          SET part2 = d
+        }
+        SET was(d) = ""
+        QUIT
+      }
+      SET e = e \ 256
+    }
+  }
+
+  WRITE !,"Part2 = ",part2
+}
