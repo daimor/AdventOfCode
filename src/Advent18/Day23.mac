@@ -1,0 +1,92 @@
+ROUTINE Advent18.Day23
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  WHILE $$$nextLine(lines, line) {
+    SET line = $LISTFROMSTRING($ZSTRIP(line, "*E'N", "", ",-"))
+    SET $LISTBUILD(x, y, z, r) = line
+    SET bots(r, $INCREMENT(bots(r))) = $LISTBUILD(x, y, z)
+    SET all($INCREMENT(all)) = line
+  }
+  WRITE !!
+  WRITE !,"Part1 = ",$$part1(.bots)
+  WRITE !,"Part2 = ",$$part2(.all)
+
+}
+part1(&bots) {
+  SET mr = $ORDER(bots(""), -1, ind)
+  SET $LISTBUILD(mx, my, mz) = bots(mr, ind)
+  SET r = ""
+  SET part1 = 0
+  FOR {
+    SET r = $ORDER(bots(r), -1, cnt)
+    QUIT:r=""
+    FOR i=1:1:cnt {
+      SET $LISTBUILD(x, y, z) = bots(r, i)
+      SET distance = $$distance(mx, x, my, y, mz, z)
+      IF distance<=mr {
+        SET part1 = part1 + 1
+      }
+    }
+  }
+  RETURN part1
+}
+distance(x1, x2, y1, y2, z1, z2) {
+  QUIT $ZABS(x1-x2)+$ZABS(y1-y2)+$ZABS(z1-z2)
+}
+part2(&bots) {
+  SET (minX, minY, minZ) = 1e13
+  SET (maxX, maxY, maxZ) = -1e13
+  FOR i=1:1:bots {
+    SET $LISTBUILD(x, y, z, r) = bots(i)
+    IF x<minX SET minX = x
+    IF y<minY SET minY = y
+    IF z<minZ SET minZ = z
+    IF x>maxX SET maxX = x
+    IF y>maxY SET maxY = y
+    IF z>maxZ SET maxZ = z
+  }
+  SET distance = $$$max($LISTBUILD(maxX, maxY, maxZ)) - $$$min($LISTBUILD(minX, minY, minZ))
+
+  FOR {
+    SET maxCount = 0
+    SET best = 1e13
+    FOR x=minX:distance:maxX {
+      FOR y=minY:distance:maxY {
+        FOR z=minZ:distance:maxZ {
+          SET cnt = 0
+          FOR i=1:1:bots {
+            SET $LISTBUILD(botX, botY, botZ, botR) = bots(i)
+            IF ($$distance(botX, x, botY, y, botZ, z) - botR \ distance) <= 0 {
+              SET cnt = cnt + 1
+            }
+          }
+          SET tmpDist = $ZABS(x) + $ZABS(y) + $ZABS(z)
+          IF cnt > maxCount {
+            SET maxCount = cnt
+            SET best = tmpDist
+            SET bestX = x, bestY = y, bestZ = z
+          }
+          ELSEIF cnt=maxCount {
+            IF tmpDist<best {
+              SET best = tmpDist
+              SET bestX = x, bestY = y, bestZ = z
+            }
+          }
+        }
+      }
+    }
+    IF distance=1 {
+      RETURN best
+    }
+    ELSE {
+      SET minX = bestX - distance, maxX =  bestX + distance
+      SET minY = bestY - distance, maxY =  bestY + distance
+      SET minZ = bestZ - distance, maxZ =  bestZ + distance
+      SET distance = distance \ 2
+    }
+  }
+  RETURN 0
+}
