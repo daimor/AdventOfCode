@@ -1,0 +1,53 @@
+ROUTINE Advent18.Day25
+#include helper
+Start() public {
+  $$$input(lines)
+  FOR i=1:1:lines {
+    SET line = $TRANSLATE(lines(i), " ")
+    SET line = $LISTFROMSTRING(line)
+    FOR j=1:1:$LISTLENGTH(line) {
+      SET $LIST(line, j) = +$LIST(line, j)
+    }
+    SET lines(i) = line
+  }
+
+  SET cons = 0
+  SET counter = 0
+  FOR i=1:1:lines {
+    SET a = lines(i)
+    SET found = ""
+    FOR j=1:1:cons {
+      CONTINUE:'$DATA(cons(j))
+      FOR k=1:1:$LISTLENGTH(cons(j)) {
+        SET b = $LIST(cons(j), k)
+        SET distance = $$distance(a, b)
+        CONTINUE:distance>3
+        CONTINUE:$LISTFIND(found, j)
+        SET found = found _ $lb(j)
+      }
+    }
+    IF found="" {
+      SET pos = $INCREMENT(cons)
+      SET cons(pos) = $LISTBUILD(a)
+      SET counter = counter + 1
+    }
+    ELSE {
+      SET pos = $LIST(found, 1)
+      SET cons(pos) = cons(pos) _ $LISTBUILD(a)
+      FOR k=2:1:$LISTLENGTH(found) {
+        SET del = $LIST(found, k)
+        SET cons(pos) = cons(pos) _ cons(del)
+        KILL cons(del)
+        SET counter = counter - 1
+      }
+    }
+  }
+  WRITE !,"Result = ",counter
+}
+distance(a, b) public {
+  SET distance = 0
+  FOR i=1:1:$LISTLENGTH(a) {
+    SET distance = distance + $ZABS(+$LIST(a, i) - +$LIST(b, i))
+  }
+  RETURN distance
+}
