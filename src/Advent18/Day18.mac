@@ -67,4 +67,23 @@ magic(&map, &counts) {
     IF $INCREMENT(counts("|"), $LENGTH($ZSTRIP(newLine,"*E",,"|")))
   }
   MERGE map = newMap
+  if 0 {
+    DO show(.map)
+    HANG 0.01
+  }
+}
+show(&map) {
+  SET height = map
+  SET width = $LENGTH(map(1))
+  KILL counts
+  WRITE #
+  FOR y=1:1:height {
+    SET line = map(y)
+    SET newLine = ""
+    WRITE !
+    FOR x=1:1:width {
+      SET acre = $EXTRACT(line, x)
+      WRITE acre
+    }
+  }
 }
