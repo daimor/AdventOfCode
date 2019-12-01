@@ -1,0 +1,19 @@
+ROUTINE Advent19.Day1
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  Set part1 = 0
+  Set part2 = 0
+  For i=1:1:lines {
+    Set data = lines(i)
+    Set part1 = part1 + (data\3-2)
+    Do {
+      Set val = data \ 3 - 2
+      If (val>0),$Increment(part2, val)
+      Set data = val
+    } While val>0
+  }
+  ZWrite part1,part2
+}
