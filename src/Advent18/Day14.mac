@@ -1,0 +1,51 @@
+ROUTINE Advent18.Day14
+#include helper
+Start() public {
+  set input = 165061
+  #; set input = 9
+
+  #define add(%v) set ^CacheTemp.Recipes($INCREMENT(^CacheTemp.Recipes)) = %v
+
+  kill ^CacheTemp.Recipes
+  $$$add(3)
+  $$$add(7)
+
+  set part1 = 0, part2 = 0
+  set e1 = 1
+  set e2 = 2
+  set prev = 0
+  for {
+    if '$d(^CacheTemp.Recipes(e1)) b
+    if '$d(^CacheTemp.Recipes(e2)) b
+    set v1 = ^CacheTemp.Recipes(e1)
+    set v2 = ^CacheTemp.Recipes(e2)
+    set s = v1 + v2
+    if s\10 $$$add(s\10)
+    $$$add(s#10)
+    set len = ^CacheTemp.Recipes
+    set e1 = e1 + 1 + v1, e1 = $SELECT(e1#len: e1#len, 1: len)
+    set e2 = e2 + 1 + v2, e2 = $SELECT(e2#len: e2#len, 1: len)
+    if 'part1,(^CacheTemp.Recipes-input-10)>0 {
+      set result = ""
+      for i=input+1:1:input+10 set result = result _ ^CacheTemp.Recipes(i)
+      write !,"Part1 - ",result
+      set part1 = 1
+    }
+    if ^CacheTemp.Recipes-prev>100 {
+      set part2 = $$find(input, 200)
+      set prev = ^CacheTemp.Recipes
+    }
+    quit:part2
+  }
+  write !,"Part2 - ",part2
+}
+find(input, max) {
+  set found = 0
+  set str = ""
+  for i=^CacheTemp.Recipes-max:1:^CacheTemp.Recipes {
+    set str = str _ $GET(^CacheTemp.Recipes(i))
+  }
+  set pos = $FIND(str, input)
+  quit:pos>0 ^CacheTemp.Recipes - $LENGTH(str) + pos - $LENGTH(input) - 1
+  quit 0
+}

@@ -1,0 +1,7 @@
+ROUTINE Advent18.Day24
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  #; $$$input(lines)
+}

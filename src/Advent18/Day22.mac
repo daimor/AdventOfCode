@@ -1,0 +1,146 @@
+ROUTINE Advent18.Day22
+#include helper
+Start() public {
+
+  SET depth = 510
+  SET targetX = 10
+  SET targetY = 10
+  #; DO cave(depth, targetX, targetX)
+
+  #; SET depth = 8787
+  #; SET targetX = 10
+  #; SET targetY = 725
+
+  SET risk = $$cave(.cave, depth, targetX, targetY)
+  SET path = $lb($lb(0,0),$lb(0,1),$lb(0,2),$lb(0,3),$lb(0,4),$lb(0,5),$lb(0,6),$lb(0,7),$lb(0,8),$lb(0,9),$lb(0,10),$lb(0,11),$lb(0,12),$lb(0,13),$lb(0,14),$lb(0,15),$lb(1,15),$lb(1,14),$lb(1,13),$lb(1,12),$lb(1,11),$lb(1,10),$lb(1,9),$lb(2,9),$lb(2,10),$lb(2,11),$lb(2,12),$lb(2,13),$lb(2,14),$lb(2,15),$lb(3,15),$lb(3,14),$lb(3,13),$lb(3,12),$lb(3,11),$lb(3,10),$lb(3,9),$lb(4,9),$lb(4,10),$lb(4,11),$lb(4,12),$lb(4,13),$lb(4,14),$lb(4,15),$lb(5,15),$lb(5,14),$lb(5,13),$lb(5,12),$lb(5,11),$lb(5,10),$lb(5,9),$lb(6,9),$lb(6,10),$lb(6,11),$lb(6,12),$lb(6,13),$lb(6,14),$lb(6,15),$lb(7,15),$lb(7,14),$lb(7,13),$lb(7,12),$lb(7,11),$lb(7,10),$lb(7,9),$lb(8,9),$lb(8,10),$lb(8,11),$lb(8,12),$lb(8,13),$lb(8,14),$lb(8,15),$lb(9,15),$lb(9,14),$lb(9,13),$lb(9,12),$lb(9,11),$lb(9,10),$lb(9,9),$lb(10,9),$lb(10,8),$lb(9,8),$lb(8,8),$lb(7,8),$lb(6,8),$lb(5,8),$lb(4,8),$lb(3,8),$lb(2,8),$lb(1,8),$lb(1,7),$lb(2,7),$lb(3,7),$lb(4,7),$lb(5,7),$lb(6,7),$lb(7,7),$lb(8,7),$lb(9,7),$lb(10,7),$lb(10,6),$lb(9,6),$lb(8,6),$lb(7,6),$lb(6,6),$lb(5,6),$lb(4,6),$lb(3,6),$lb(2,6),$lb(1,6),$lb(1,5),$lb(2,5),$lb(3,5),$lb(4,5),$lb(5,5),$lb(6,5),$lb(7,5),$lb(8,5),$lb(9,5),$lb(10,5),$lb(10,4),$lb(9,4),$lb(8,4),$lb(7,4),$lb(6,4),$lb(5,4),$lb(4,4),$lb(3,4),$lb(2,4),$lb(1,4),$lb(1,3),$lb(2,3),$lb(3,3),$lb(4,3),$lb(5,3),$lb(6,3),$lb(7,3),$lb(8,3),$lb(9,3),$lb(10,3),$lb(10,2),$lb(9,2),$lb(8,2),$lb(7,2),$lb(6,2),$lb(5,2),$lb(4,2),$lb(3,2),$lb(2,2),$lb(1,2),$lb(1,1),$lb(2,1),$lb(3,1),$lb(4,1),$lb(5,1),$lb(6,1),$lb(7,1),$lb(8,1),$lb(9,1),$lb(10,1),$lb(10,0),$lb(11,0),$lb(11,1),$lb(11,2),$lb(11,3),$lb(11,4),$lb(11,5),$lb(11,6),$lb(11,7),$lb(11,8),$lb(11,9),$lb(11,10))
+  #; WRITE !,$$time(.cave, path)
+  #; QUIT
+  #; WRITE !,"Part1  = ",risk
+  WRITE !,"Part2 = ",$$dive(.cave, 0, 0, targetX, targetY)
+}
+cave(cave, depth, tx, ty) {
+  KILL cave
+  SET risk = 0
+  SET height = ty + 5
+  SET width = tx + 5
+  FOR y=0:1:height {
+    FOR x=0:1:width {
+      IF ('x)||('y) {
+        SET index = (x * 16807) + (y * 48271)
+      }
+      ELSEIF y=ty,x=tx {
+        SET index = 0
+      }
+      ELSE {
+        SET index = cave(y, x -1, "level") * cave(y -1, x, "level")
+      }
+      SET level = index + depth # 20183
+      SET cave(y, x, "level") = level
+      IF y'>ty,x'>tx {
+        SET risk = risk + (level # 3)
+      }
+
+      SET cave(y, x) = $EXTRACT(".=|", level # 3 + 1)
+    }
+  }
+  SET cave(0, 0) = "M"
+  SET cave(ty, tx) = "T"
+  RETURN risk
+  #; DO show(.cave, width, height)
+}
+show(&cave, width, height) {
+  FOR y=0:1:height {
+    WRITE !
+    FOR x=0:1:width {
+      WRITE $GET(cave(y, x), ".")
+    }
+  }
+}
+#; . - rocky
+#; = - wet
+#; | - narrow
+#; tools
+#; 0 - neither
+#; 1 - climbing gear
+#; 2 - torch
+dive(cave, cx, cy, tx, ty, path = "") {
+  SET time = 0
+  SET found = 0
+  IF cx=tx,cy=ty {
+    BREAK
+    RETURN 0
+  }
+  IF '$DATA(cave(cy, cx)) {
+    RETURN 1e10
+  }
+  IF $LISTFIND(path, $LISTBUILD(cx, cy)) {
+    RETURN 1e10
+  }
+  SET path = path _ $LISTBUILD($LISTBUILD(cx, cy))
+  #; WRITE !,cx, " - ",cy," - ",$LISTLENGTH(path)
+  SET list = $lb(1e10)
+
+  SET waysf = $LISTBUILD($LISTBUILD(1, 0), $LISTBUILD(0, 1))
+  SET waysb = $LISTBUILD($LISTBUILD(0, -1), $LISTBUILD(-1, 0))
+  IF cx<tx,cy<ty {
+    SET ways = waysf_waysb
+  }
+  ELSE {
+    SET ways = waysb_waysf
+  }
+  FOR i=1:1:$LISTLENGTH(ways) {
+    SET $LISTBUILD(dy, dx) = $LIST(ways, i)
+    SET x = cx + dx
+    SET y = cy + dy
+    CONTINUE:$LISTFIND(path, $LISTBUILD(x, y))
+    CONTINUE:'$DATA(cave(y, x))
+    IF x=tx,y=ty {
+      WRITE !,"FOUND - ",$LISTLENGTH(path) //$$time(.cave, path)
+
+      RETURN 0
+    }
+    SET type = cave(y, x)
+    SET res = $$dive(.cave, x, y, tx, ty, path)
+    #; SET tools = $CASE(type, ".": "12", "M": "12", "=": "10", "|": "20", : "")
+    #; FOR j=1:1:$LENGTH(tools) {
+    #;   SET tool = $EXTRACT(tools, j)
+    #;   QUIT:res<1e9
+    #;   SET res = res + 1
+    #;   BREAK:res<1e9
+    #;   IF ct'="",ct'=tool set res = res + 7
+    #;   SET list = list _ $LISTBUILD(res)
+    #; }
+  }
+
+  SET time = $$$min(list)
+  IF time<1e8 {
+    BREAK
+  }
+
+  RETURN time
+}
+time(&cave, path, ptool = "", toolsPath = "") public {
+  IF path="" {
+    SET time = $LENGTH(toolsPath) + $LENGTH($ZSTRIP(toolsPath, "=N") - 1 * 7 )
+    ZWRITE time
+    QUIT time
+  }
+  SET $LISTBUILD(x, y) = $LIST(path)
+  SET type = cave(y, x)
+  SET tools = $CASE(type, ".": "12", "=": "10", "|": "20", : "12")
+  SET times = ""
+  if ptool'="",tools[ptool {
+    RETURN $$time(.cave, $LIST(path, 2, *), ptool, toolsPath_ptool)
+  }
+  ELSE {
+    FOR j=1:1:$LENGTH(tools) {
+      SET tool = $EXTRACT(tools, j)
+      CONTINUE:ptool=tool
+      SET time = $$time(.cave, $LIST(path, 2, *), tool, toolsPath_tool)
+      IF ptool'="",ptool'=tool set time = time + 7
+      SET time = time + 1
+      SET times = times _ $LISTBUILD(time)
+    }
+  }
+  QUIT $$$min(times)
+}

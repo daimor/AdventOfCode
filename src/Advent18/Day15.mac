@@ -1,0 +1,54 @@
+ROUTINE Advent18.Day15
+#include helper
+Start()[all,walls,goblins,elfs] public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  KILL all,walls,goblins,elfs
+  $$$input(lines)
+  SET x = 0
+  SET (all, goblins, elfs) = ""
+  SET hp = 200
+
+  WHILE $$$nextLine(lines, line) {
+    SET x = x + 1
+    FOR y=1:1:$LENGTH(line) {
+      SET c = $EXTRACT(line, y)
+      CONTINUE:c="."
+      SET map(x,y)=c
+      IF c="#" {
+        SET walls(x, y) = 1
+        CONTINUE
+      }
+      SET all($INCREMENT(all)) = $LISTBUILD(c, x, y)
+      IF c="G" {
+        SET goblins(x, y) = 1
+      } ELSEIF c="E" {
+        SET elfs(x, y) = 1
+      }
+      SET player = $LISTBUILD(x, y, hp, c)
+      SET players($INCREMENT(players)) = player
+    }
+  }
+  #; DO move()
+}
+move() [all,walls,goblins,elfs] {
+  FOR i=1:1:all {
+    SET $LISTBUILD(unit, x, y) = all(i)
+    SET inRange = $$inRange(x, y)
+    FOR j=1:1:$LISTLENGTH(inRange) {
+      SET $LISTBUILD(tx, ty) = $LIST(inRange, j)
+      SET tinRange = $$inRange(tx, ty)
+      IF tinRange="" set inRange = ""
+    }
+    ZWRITE inRange
+  }
+
+}
+inRange(x, y) [all,walls,goblins,elfs] {
+  SET res = ""
+  IF '$DATA(walls(x - 1, y)),'$DATA(goblins(x - 1, y)),'$DATA(elfs(x - 1, y)) set res = res _ $LISTBUILD($LISTBUILD(x - 1, y))
+  IF '$DATA(walls(x, y - 1)),'$DATA(goblins(x, y - 1)),'$DATA(elfs(x, y - 1)) set res = res _ $LISTBUILD($LISTBUILD(x, y - 1))
+  IF '$DATA(walls(x + 1, y)),'$DATA(goblins(x + 1, y)),'$DATA(elfs(x + 1, y)) set res = res _ $LISTBUILD($LISTBUILD(x + 1, y))
+  IF '$DATA(walls(x, y + 1)),'$DATA(goblins(x, y + 1)),'$DATA(elfs(x, y + 1)) set res = res _ $LISTBUILD($LISTBUILD(x, y + 1))
+  RETURN res
+}
