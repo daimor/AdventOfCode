@@ -1,0 +1,37 @@
+ROUTINE Advent19.Day2
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  $$$inputFull(input)
+  #; $$$input(lines)
+  #; Set input = "1,9,10,3,2,3,11,0,99,30,40,50"
+  #; Set input = "1,0,0,0,99"
+  Set input = $Listfromstring($zstrip(input,"<>WC"))
+  Set part1 = $$run(input, 12, 2)
+  ZWrite part1
+  For i1=0:1:99 {
+    For i2=0:1:99 {
+      Set part2 = $$run(input, i1, i2)
+      if (part2 = 19690720) {
+        Write !,"part2 = ",i1*100+i2
+        Return
+      }
+    }
+  }
+}
+run(input, i1, i2) {
+  Set $List(input, 2) = i1
+  Set $List(input, 3) = i2
+  For i=1:1:$Listlength(input) {
+    Set opcode = $List(input, i)
+    Quit:opcode=99
+    Set $lb(op1, op2, op3) = $List(input, i+1, i+3)
+    set val1 = $List(input, op1+1)
+    set val2 = $List(input, op2+1)
+    set val = $case(opcode, 1: val1 + val2, 2: val1 * val2)
+    Set $List(input, op3+1) = val
+    #; Write !,opcode," - ",val1," - ",val2, " - ",val
+    Set i = i + 3
+  }
+  Return $List(input)
+}
