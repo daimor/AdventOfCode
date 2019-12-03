@@ -1,55 +1,70 @@
 ROUTINE advent
 Start() public {
-  set $lb(mon,day,year) = $lfs($zd($h), "/")
-  if mon'=12 quit
-  set day = +day
-  set yy = $e(year, 3, 4)
-  set rtnName = "Advent"_yy_".Day"_day
-  write !,year," - ",day,!,"----------",!!
-  if '##class(%Routine).%ExistsId(rtnName) {
-    do newDay(year, day)
+  Set $Listbuild(mon,day,year) = $Listfromstring($ZDate($Horolog), "/")
+  If mon'=12 quit
+  Set day = +day
+  Set yy = $Extract(year, 3, 4)
+  Set rtnName = "Advent"_yy_".Day"_day
+  Write !,year," - ",day,!,"----------",!!
+  If '##class(%Routine).%ExistsId(rtnName) {
+    Do newDay(year, day)
   }
-  try {
-    do @("^"_rtnName)
-  } catch {
-    w $ze
+  Try {
+    Do @("^"_rtnName)
   }
-  quit
+  catch {
+    Write $ZError
+  }
+  Quit
 }
 newDay(year,day) public {
-  set ht=##class(%Net.HttpRequest).%New()
-  set ht.Server = "adventofcode.com"
-  set ht.Https = 1
-  set ht.SSLConfiguration = $$cert(ht.Server)
-  do ht.InsertCookie("session", $g(^AdventSession), "/", ht.Server, $h+10)
-  set sc = ht.Get("/"_year_"/day/"_day_"/input")
-  if ht.HttpResponse.StatusCode=200 {
-    set fs = ##class(%Stream.FileCharacter).%New()
-    do fs.LinkToFile("/opt/advent/input/"_year_"/day"_day_".txt")
-    do fs.CopyFromAndSave(ht.HttpResponse.Data)
-    write !,"Input file: ",fs.Filename," - ",fs.Size
+  Set yy = $Extract(year, *-1, *)
+  Set routinePath = "/opt/advent/src/Advent"_yy
+  if ('##class(%File).Exists(routinePath)) && ('##class(%File).CreateDirectoryChain(routinePath)) {
+    Write !,"Creating directory: ",routinePath," - ERROR"
+    Return
+  }
+  Set inputPath = "/opt/advent/input/"_year
+  if ('##class(%File).Exists(inputPath)) && ('##class(%File).CreateDirectoryChain(inputPath)) {
+    Write !,"Creating directory: ",inputPath," - ERROR"
+    Return
+  }
+  Set ht = ##class(%Net.HttpRequest).%New()
+  Set ht.Server = "adventofcode.com"
+  Set ht.Https = 1
+  Set ht.SSLConfiguration = $$cert(ht.Server)
+  Do ht.InsertCookie("session", $Get(^AdventSession), "/", ht.Server, $Horolog+10)
+  Set sc = ht.Get("/"_year_"/day/"_day_"/input")
+  If ht.HttpResponse.StatusCode=200 {
+    Set fs = ##class(%Stream.FileCharacter).%New()
+    Do fs.LinkToFile(inputPath_"/day"_day_".txt")
+    Do fs.CopyFromAndSave(ht.HttpResponse.Data)
+    Write !,"Input file: ",fs.Filename," - ",fs.Size
   }
 
-  set yy = $e(year, *-1, *)
-  set fs = ##class(%Stream.FileCharacter).%New()
-  do fs.LinkToFile("/opt/advent/src/Advent"_yy_"/Day"_day_".mac")
-  do fs.WriteLine("ROUTINE Advent"_yy_".Day"_day)
-  do fs.WriteLine("#include helper")
-  do fs.WriteLine("Start() public {")
-  do fs.WriteLine("  #; $$$inputAll(input)")
-  do fs.WriteLine("  #; $$$inputFull(input)")
-  do fs.WriteLine("  #; $$$input(lines)")
-  do fs.WriteLine("}")
-  if fs.%Save() {
-    do $system.OBJ.Load(fs.Filename, "ck")
+  Set fs = ##class(%Stream.FileCharacter).%New()
+  Set fileName = routinePath_"/Day"_day_".mac"
+  If 'fs.LinkToFile(fileName) {
+    Write !,"Error"
+    Return
   }
+  Do fs.WriteLine("ROUTINE Advent"_yy_".Day"_day)
+  Do fs.WriteLine("#include helper")
+  Do fs.WriteLine("Start() public {")
+    Do fs.WriteLine("  #; $$$inputAll(input)")
+    Do fs.WriteLine("  #; $$$inputFull(input)")
+    Do fs.WriteLine("  #; $$$input(lines)")
+    Do fs.WriteLine("}")
+    If fs.%Save() {
+      Do $System.OBJ.Load(fs.Filename, "ck")
+    }
 }
 cert(host) public {
-  new $namespace
-  set $namespace = "%SYS"
-  if ##class(Security.SSLConfigs).Exists(host) quit host
-  set cert = ##class(Security.SSLConfigs).%New()
-  set cert.Name = host
-  do cert.%Save()
-  quit host
+  New $Namespace
+  Set $Namespace = "%SYS"
+  If ##class(Security.SSLConfigs).Exists(host) quit host
+  Set cert = ##class(Security.SSLConfigs).%New()
+  Set cert.Name = host
+  Do cert.%Save()
+  Quit host
 }

@@ -1,7 +1,16 @@
 {
   "objectscript.conn": {
+    "active": true,
     "port": 52773,
-    "ns": "ADVENT"
+    "ns": "ADVENT",
+    "username": "_SYSTEM",
+    "password": "SYS",
+    "docker-compose": {
+      "port": 52773,
+      "service": "iris",
+      "file": "docker-compose.yml"
+    }
   },
-  "python.linting.pylintEnabled": false
+  "python.linting.pylintEnabled": false,
+  "python.pythonPath": "/usr/local/bin/python3"
 }

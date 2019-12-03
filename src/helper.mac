@@ -42,7 +42,7 @@ max(&list, &ind, delim = ",") public {
   RETURN max
 }
 min(&list, &ind, delim = ",") public {
-  SET min = 99999999,ind=""
+  SET min = 1e13,ind=""
   IF $d(list)\10 {
     SET el=""
     FOR {
