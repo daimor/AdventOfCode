@@ -1,0 +1,35 @@
+ROUTINE Advent19.Day4
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  #; $$$input(lines)
+  Set part1 = 0,part2 = 0
+  for p=134564:1:585159 {
+    If $$check(p) {
+      Set part1 = part1 + 1
+    }
+    If $$check(p,1) {
+      Set part2 = part2 + 1
+    }
+  }
+  ZWrite part1,part2
+}
+check(pass, p2=0) public {
+  Set check1 = 0
+  For i=2:1:6 {
+    If 'p2,$Extract(pass, i)=$Extract(pass, i-1) {
+      Set check1 = 1
+    }
+    If p2 {
+      If $Extract(pass, i-2)'=$Extract(pass, i-1),$Extract(pass, i)=$Extract(pass, i-1),$Extract(pass, i)'=$Extract(pass, i+1) {
+        Set check1 = 1
+      }
+    }
+
+    If $Extract(pass, i)<$Extract(pass, i-1) {
+      Return 0
+    }
+  }
+  Return check1
+}
