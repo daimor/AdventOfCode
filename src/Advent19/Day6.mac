@@ -1,0 +1,51 @@
+ROUTINE Advent19.Day6
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  For i=1:1:lines {
+    Set info = lines(i)
+    Set $Listbuild(from, to) = $Listfromstring(info, ")")
+    Set orbits(from, to) = ""
+    Set orbitsback(to, from) = ""
+  }
+
+  Set part1 = 0
+  Set from = ""
+  For  {
+    Set from = $Order(orbits(from))
+    Quit:from=""
+    Set part1 = part1 + $$count(.orbits, from)
+  }
+  ZWrite part1
+
+  Merge orbits = orbitsback
+  Do search(.orbits, "YOU")
+
+}
+search(orbits, from, were = "") {
+  Set to = ""
+  For  {
+    Set to = $Order(orbits(from, to))
+    Quit:to=""
+    Continue:$lf(were, to)
+    If to="SAN" {
+      Set part2 = $Listlength(were) - 1
+      ZWrite part2
+      Return
+    }
+    Do search(.orbits, to, were_$lb(to))
+  }
+  Quit
+}
+count(orbits, from) {
+  Set to = ""
+  Set count = 0
+  For  {
+    Set to = $Order(orbits(from, to))
+    Quit:to=""
+    Set count = count + 1 + $$count(.orbits, to)
+  }
+  Quit count
+}

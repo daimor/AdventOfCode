@@ -4,7 +4,7 @@ ROUTINE helper [Type=INC]
   set sc=fs.LinkToFile("/opt/advent/input/"_year_"/"_day_".txt")
 
 #define inputFull(%input) $$$openFile ##continue
-  set %input = fs.Read(fs.Size) ##continue
+  set %input = $zstrip(fs.Read(fs.Size), "<>WC") ##continue
 
 #define inputAll(%input) $$$openFile ##continue
   set %input = fs.Read(fs.Size) ##continue
