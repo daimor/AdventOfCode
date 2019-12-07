@@ -1,0 +1,59 @@
+ROUTINE Advent19.Day5
+#include helper
+Start() public {
+  $$$inputFull(program)
+
+  #; Set program = "3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99"
+  #; Set program = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1"
+  Set program = $Listfromstring(program)
+  Do run(program, 5)
+  #; Do run(program, 10)
+  #; Do run(program, 8)
+  #; Do run(program, 1)
+  #; Do run(program, 0)
+}
+run(program, input) {
+  Write !!
+  Set pos = 1
+  For {
+    Set command = $Translate($Justify($List(program, pos), 5), " ", 0)
+    Set opcode = +$Extract(command, *-1, *)
+    Break:+command=0
+    Quit:opcode=99
+    #; ZWrite program
+    #; ZWrite pos,opcode
+    Set param1 = +$Extract(command, *-2)
+    Set param2 = +$Extract(command, *-3)
+    Set param3 = +$Extract(command, *-4)
+    Set pos1 = $List(program, pos + 1)
+    Set pos2 = $List(program, pos + 2)
+    Set pos3 = $List(program, pos + 3)
+    If opcode=3 {
+      Set $List(program, pos1 + 1) = input
+      Set pos = pos + 2
+    }
+    ElseIf opcode=4 {
+      Set val1 = $Select(param1: pos1, 1: $List(program, pos1 + 1))
+      Write val1
+      Set pos = pos + 2
+    }
+    Else {
+      Set val1 = $Select(param1: pos1, 1: $List(program, pos1 + 1))
+      Set val2 = $Select(param2: pos2, 1: $List(program, pos2 + 1))
+      #; Break:56[opcode
+      If 12[opcode {
+        Set val3 = $Case(opcode, 1: val1 + val2, 2: val1 * val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+      ElseIf 56[opcode {
+        Set pos = $Select((opcode=5)&&(val1'=0): val2 +1, (opcode=6)&&(val1=0): val2 + 1, 1: pos + 3)
+      }
+      ElseIf 78[opcode {
+        Set val3 = $Case(opcode, 7: val1 < val2, 8: val1 = val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+    }
+  }
+}
