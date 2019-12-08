@@ -1,0 +1,104 @@
+ROUTINE Advent19.Day7
+#include helper
+Start() public {
+  $$$inputFull(program)
+
+  Kill %list
+  Do search(program,, $Listbuild(0, 1, 2, 3, 4))
+  Set part1 = $Order(%list(1e13), -1)
+  ZWrite part1
+
+  Kill %list
+  Do search(program,, $Listbuild(5, 6, 7, 8, 9))
+  Set part2 = $Order(%list(1e13), -1)
+  ZWrite part2
+}
+search(program, inputs = "", list) {
+  If $Listlength(inputs)=5 {
+    Do test(program, inputs)
+    Quit
+  }
+  For k=1:1:5 {
+    Set i = $List(list, k)
+    Continue:$Listfind(inputs, i)
+    Do search(program, inputs _ $Listbuild(i), list)
+  }
+  Quit
+}
+test(program, input) {
+  Set program = $Listfromstring(program)
+  Set result = 0
+  For i=1:1:5 {
+    Set state(i, "pos") = 1
+    Set state(i, "program") = program
+    Set state(i, "input") = $Listbuild($List(input, i))
+  }
+  Set $List(state(1, "input"), 2) = 0
+  Do {
+    For i=1:1:5 {
+      Set statePos = state(i, "pos")
+      Set stateProgram = state(i, "program")
+      Set stateInput = state(i, "input")
+
+      Set result = $$run(.stateProgram, .stateInput, .statePos, .end)
+
+      Set state(i, "input") = stateInput
+      Set state(i, "pos") = statePos
+      Set state(i, "program") = stateProgram
+
+      Set next = $Select(i = 5: 1, 1: i + 1)
+      Set state(next, "input") = state(next, "input") _ $Listbuild(result)
+    }
+  } while 'end
+  Set %list(result) = ""
+}
+run(&program, input, pos = 1, end = 0) {
+  Set output = ""
+  For {
+    Set command = $Translate($Justify($List(program, pos), 5), " ", 0)
+    Set opcode = +$Extract(command, *-1, *)
+    Break:+command=0
+    Quit:opcode=99
+    Set param1 = +$Extract(command, *-2)
+    Set param2 = +$Extract(command, *-3)
+    Set param3 = +$Extract(command, *-4)
+    Set pos1 = $List(program, pos + 1)
+    If 12345678[opcode {
+      Set pos2 = $List(program, pos + 2)
+    }
+    If 125678[opcode {
+      Set pos3 = $List(program, pos + 3)
+    }
+    If opcode=3 {
+      If (input="")  Return output
+      Set val1 = $List(input, 1)
+      Set $List(input, 1, 1) = ""
+      Set $List(program, pos1 + 1) = val1
+      Set pos = pos + 2
+    }
+    ElseIf opcode=4 {
+      Set val1 = $Select(param1: pos1, 1: $List(program, pos1 + 1))
+      Set output = output_val1
+      Set pos = pos + 2
+    }
+    Else {
+      Set val1 = $Select(param1: pos1, 1: $List(program, pos1 + 1))
+      Set val2 = $Select(param2: pos2, 1: $List(program, pos2 + 1))
+      If 12[opcode {
+        Set val3 = $Case(opcode, 1: val1 + val2, 2: val1 * val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+      ElseIf 56[opcode {
+        Set pos = $Select((opcode=5)&&(val1'=0): val2 +1, (opcode=6)&&(val1=0): val2 + 1, 1: pos + 3)
+      }
+      ElseIf 78[opcode {
+        Set val3 = $Case(opcode, 7: val1 < val2, 8: val1 = val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+    }
+  }
+  Set end = 1
+  Return output
+}
