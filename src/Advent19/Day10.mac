@@ -1,0 +1,106 @@
+ROUTINE Advent19.Day10
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  while $$$nextLine(lines,input) {
+    Quit:input=""
+    Set y = index
+    For x=1:1:$Length(input) {
+      Set map(y-1, x-1) = $Extract(input, x) '= "."
+    }
+  }
+  Set max = 0
+  Set h = $Order(map(9999), -1)
+  Set w = $Order(map(1, 9999), -1)
+  For y=0:1:h {
+    For x=0:1:w {
+      Set count = $$search(.map, y, x)
+      If count>max {
+        Set max = count
+        Set maxPos = $Listbuild(y, x)
+      }
+    }
+  }
+  Set part1 = max
+  ZWrite part1,maxPos
+
+  Set $Listbuild(y, x) = maxPos
+  For ty=0:1:h {
+    For tx=0:1:w {
+      Continue:'$$inSight(.map, y, x, ty, tx)
+      Set angle = $$angle(y, x, ty, tx)
+      Set list(angle) = $Listbuild(ty, tx)
+    }
+  }
+  Set angle= ""
+  For i=1:1:200 {
+    Set angle = $Order(list(angle), 1, val)
+    Quit:angle=""
+    #; Write !,i," - ",angle," - ",$Listtostring(val)
+  }
+  Set $Listbuild(y, x) = val
+  Set part2 = x * 100 + y
+  ZWrite part2
+}
+draw(&map) {
+  Set h = $Order(map(9999), -1)
+  Set w = $Order(map(1, 9999), -1)
+  For y=0:1:h {
+    Write !
+    For x=0:1:w {
+      Write $Case(map(y, x), 1: "#", 2: "@", : " ")
+    }
+  }
+}
+search(&map, y, x) {
+  Quit:'map(y,x) 0
+  Set h = $Order(map(9999), -1)
+  Set w = $Order(map(1, 9999), -1)
+  Set count = 0
+  For ty=0:1:h {
+    For tx=0:1:w {
+      If $$inSight(.map, y, x, ty, tx) {
+        Set count = count + 1
+        Set map(ty, tx) = 2
+      }
+    }
+  }
+  Quit count
+}
+angle(y1, x1, y2, x2) public {
+  Set dy = y1 - y2
+  Set dx = x2 - x1
+  Set angle = $$ATAN2^%qarfunc(dx, dy)
+  Quit $select(angle<0: $ZPi * 2 + angle, 1: angle)
+}
+inSight(&map, y1, x1, y2, x2) {
+  Quit:'$Get(map(y1, x1)) 0
+  Quit:'$Get(map(y2, x2)) 0
+  Quit:(y1=y2)&&(x1=x2) 0
+  Set dy = y2 - y1
+  Set dx = x2 - x1
+  If '((dx=0)&&(dy=0)) {
+    Set divisor = $$divisor(dy, dx)
+    Set dy = dy \ divisor
+    Set dx = dx \ divisor
+  }
+  Set y = y1 + dy
+  Set x = x1 + dx
+  While $Data(map(y, x)) {
+    If $Get(map(y, x)) {
+      Return (y = y2)&&(x = x2)
+    }
+    Set y = y + dy
+    Set x = x + dx
+  }
+  Quit 0
+}
+divisor(a, b) public {
+  Set a = $ZAbs(a), b = $ZAbs(b)
+  While b {
+    Set $Listbuild(a, b) = $Listbuild(b, a#b)
+  }
+  Quit a
+}
