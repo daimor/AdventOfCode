@@ -1,0 +1,136 @@
+ROUTINE Advent19.Day11
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  $$$inputFull(program)
+  #; $$$input(lines)
+
+  Set part1 = $$paint(program)
+  ZWrite part1
+  do paint(program, .map, 1)
+  Do draw(.map)
+}
+paint(&program, &map, part2 = 0) {
+  Kill map
+  Set y = 0, x = 0
+  Set directions = $Listbuild(
+    $Listbuild(-1, 0),
+    $Listbuild(0, 1),
+    $Listbuild(1, 0),
+    $Listbuild(0, -1),
+  )
+  Set facing = 0
+  Set:part2 map(0,0) = 1
+  Set pos = 1, end = 0
+  For i=1:1 {
+    Set color = $Get(map(y, x), 0)
+
+    Set res = $$run(.program, color, .pos, .end, .base)
+    Quit:end
+
+    If '$Data(map(y,x)),$Increment(counter)
+
+    Set map(y, x) = $Extract(res)
+    Set dir = $Extract(res, 2)
+
+    Set facing = (facing + $Select(dir: -1, 1: 1)) # 4
+    Set $lb(dy,dx) = $Listget(directions, facing + 1)
+
+    Set y = y + dy
+    Set x = x + dx
+  }
+  Quit counter
+}
+draw(&map) {
+  Set minx = 1e13
+  Set maxx = -1e13
+  Set y = -1e13
+  For {
+    Set y = $Order(map(y))
+    Quit:y=""
+    Set tx = $Order(map(y, 1e13), -1)
+    if tx>maxx Set maxx = tx
+
+    Set tx = $Order(map(y, -1e13), 1)
+    if tx<minx Set minx = tx
+  }
+  Set y = -1e13
+  Write !,*27,"[40m",$Justify("", maxx-minx + 1),*27,"[0m"
+  For {
+    Set y = $Order(map(y))
+    Quit:y=""
+    Write !
+    for x=maxx:-1:minx {
+      Set color = $Get(map(y, x), 0)
+      Write *27,$select(color: "[42m ", 1: "[40m "),*27,"[0m"
+    }
+  }
+  Write !,*27,"[40m",$Justify("", maxx-minx + 1),*27,"[0m"
+}
+run(&program, input = "", pos = 1, end = 0, base = 0) public {
+  If program'="",'$Listvalid(program) {
+    Set program = $Listfromstring(program)
+  }
+  If input'="",'$Listvalid(input) {
+    Set input = $Listfromstring(input)
+  }
+  #; Set base = 0
+  Set output = ""
+  For ii=1:1 {
+    Set command = $Translate($Justify($List(program, pos), 5), " ", 0)
+    Set opcode = +$Extract(command, *-1, *)
+    Break:+command=0
+    Quit:opcode=99
+
+    Set numParams = $Select(1278[opcode: 3, 56[opcode: 2, 1: 1)
+
+    Set param1 = +$Extract(command, *-2)
+    Set pos1 = $List(program, pos + 1)
+    If opcode'=3 {
+      Set val1 = $Select(param1 = 2: $Listget(program, base + pos1 + 1), param1 = 1: pos1, 1: $Listget(program, pos1 + 1))
+    }
+
+    If numParams>1 {
+      Set param2 = +$Extract(command, *-3)
+      Set pos2 = $List(program, pos + 2)
+      Set val2 = $Select(param2 = 2: $Listget(program, base + pos2 + 1), param2 = 1: pos2, 1: $Listget(program, pos2 + 1))
+    }
+    If numParams>2 {
+      Set param3 = +$Extract(command, *-4)
+      Set pos3 = $Select(param3 = 2: base + $List(program, pos + 3), 1: $List(program, pos + 3))
+    }
+    If opcode=9 {
+      Set base = base + val1
+      Set pos = pos + 2
+    }
+    If opcode=3 {
+      If (input="")  Return output
+      Set val1 = $List(input, 1)
+      Set $List(input, 1, 1) = ""
+      Set pos1 = $Select(param1 = 2: base + $List(program, pos + 1), 1: $List(program, pos + 1))
+      Set $List(program, pos1 + 1) = val1
+      Set pos = pos + 2
+    }
+    ElseIf opcode=4 {
+      Set output = output_val1
+      Set pos = pos + 2
+    }
+    Else {
+      If 12[opcode {
+        Set val3 = $Case(opcode, 1: val1 + val2, 2: val1 * val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+      ElseIf 56[opcode {
+        Set pos = $Select((opcode=5)&&(val1'=0): val2 +1, (opcode=6)&&(val1=0): val2 + 1, 1: pos + 3)
+      }
+      ElseIf 78[opcode {
+        Set val3 = $Case(opcode, 7: val1 < val2, 8: val1 = val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+    }
+  }
+  Set end = 1
+  Return output
+}
