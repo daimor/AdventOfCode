@@ -1,0 +1,84 @@
+ROUTINE Advent19.Day12
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  While $$$nextLine(lines, line) {
+    Set line = $ZStrip(line, "*AW", "<>=")
+    Set moons($Increment(moons)) = $Listfromstring(line)
+  }
+  Merge startMoons = moons
+  Set start = $$energy(.moons)
+  For i=1:1:100 {
+    Do move(.moons)
+  }
+  Set part1 = $$energy(.moons)
+  ZWrite part1
+
+  Kill moons
+  Merge moons = startMoons
+  Set found = $Listbuild(0, 0, 0)
+  For i=1:1 {
+    Do move(.moons)
+    Quit:$$$min(found)
+    For k=1:1:3 {
+      Continue:$List(found, k)
+      Set val = ""
+      For j=1:1:moons {
+        Set val = val _ $Listbuild($List(moons(j), k), $List(moons(j), 3 + k))
+      }
+      If $Data(seen(k, val)) {
+        Set $List(found, k) = i - 1
+      }
+      Set seen(k, val) = ""
+    }
+  }
+  ZWrite found
+  Set part2 = $$$lcm(found)
+  ZWrite part2
+}
+compare(&moons1, &moons2, &val) {
+  Set yes = 1
+  For i=1:1:moons1 {
+    For k=1:1:3 {
+      Set val = $Listget(moons1(i), k, 0) - $Listget(moons2(i), k, 0)
+      Set val = val + $Listget(moons1(i), 3 + k, 0) - $Listget(moons2(i), 3 + k, 0)
+      Set yes = yes && 'val
+      Set val(k) = val
+    }
+  }
+  Quit yes
+}
+energy(&moons) {
+  Set energy = 0
+  For i=1:1:moons {
+    Set pot = $ZAbs($List(moons(i), 1)) + $ZAbs($List(moons(i), 2)) + $ZAbs($List(moons(i), 3))
+    Set kin = $ZAbs($Listget(moons(i), 4)) + $ZAbs($Listget(moons(i), 5)) + $ZAbs($Listget(moons(i), 6))
+    Set tot = pot * kin
+    Set energy = energy + tot
+  }
+  Quit energy
+}
+move(&moons) {
+  For k=1:1:3 {
+    For i=1:1:moons {
+      Set vel = $Listget(moons(i), 3 + k, 0)
+      Set xi = $List(moons(i), k)
+      For j=1:1:moons {
+        Continue:i=j
+        Set xj = $List(moons(j), k)
+        If xj>xi {
+          Set vel = vel + 1
+        }
+        ElseIf xj<xi {
+          Set vel = vel - 1
+        }
+      }
+      Set $List(moons(i), 3 + k) = vel
+    }
+    For i=1:1:moons {
+      Set $List(moons(i), k) = $List(moons(i), k) + $List(moons(i), 3 + k)
+    }
+  }
+}

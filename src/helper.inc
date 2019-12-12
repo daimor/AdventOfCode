@@ -28,3 +28,4 @@ ROUTINE helper [Type=INC]
 #def1arg or(%args) $$or^helper(%args)
 #def1arg xor(%args) $$xor^helper(%args)
 
+#define lcm(%list) $$lcm^helper(%list)

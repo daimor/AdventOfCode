@@ -1,133 +1,153 @@
 ROUTINE helper
 knot(str) public {
-  SET lengths = ""
-  FOR i=1:1:$l(str) {
-    SET lengths = lengths _ $lb($a(str, i))
+  Set lengths = ""
+  For i=1:1:$Length(str) {
+    Set lengths = lengths _ $Listbuild($Ascii(str, i))
   }
-  SET lengths = lengths _ $lb(17, 31, 73, 47, 23)
-  SET hash=$$knot^Advent17.Day10(.data, lengths, 256, 64)
-  RETURN hash
+  Set lengths = lengths _ $Listbuild(17, 31, 73, 47, 23)
+  Set hash = $$knot^Advent17.Day10(.data, lengths, 256, 64)
+  Return hash
 }
 toBits(str) public {
-  SET bits = ""
-  FOR i=1:1:$l(str) {
-    SET c = $zhex($e(str, i))
-    SET b = $factor(c)
-    FOR j=4:-1:1 {
-      SET $bit(bits, $bitcount(bits) + 1) = $bit(b,j)
+  Set bits = ""
+  For i=1:1:$Length(str) {
+    Set c = $ZHex($Extract(str, i))
+    Set b = $Factor(c)
+    For j=4:-1:1 {
+      Set $Bit(bits, $Bitcount(bits) + 1) = $Bit(b,j)
     }
   }
-  RETURN bits
+  Return bits
 }
 max(&list, &ind, delim = ",") public {
-  SET max = -99999,ind=""
-  IF $d(list)\10 {
-    SET el=""
-    FOR {
-      SET el=$o(list(el), 1, v)
-      QUIT:el=""
-      IF $d(v),v>max {
-        SET max=v,ind=el
-      } ELSEIF '$d(v),el>max {
-        SET max=el
+  Set max = -99999,ind=""
+  If $Data(list)\10 {
+    Set el = ""
+    For {
+      Set el = $Order(list(el), 1, v)
+      Quit:el=""
+      If $Data(v),v>max {
+        Set max = v,ind=el
+      }
+      ElseIf '$Data(v),el>max {
+        Set max = el
       }
     }
-  } ELSE {
-    IF '$lv(list) set list=$lfs(list, delim)
-    FOR i=1:1:$ll(list) {
-      SET v = $lg(list, i)
-      IF v>max set max=v,ind=i
+  }
+  Else {
+    If '$Listvalid(list) set list=$Listfromstring(list, delim)
+    For i=1:1:$Listlength(list) {
+      Set v = $Listget(list, i)
+      If v>max set max=v,ind=i
     }
   }
-  RETURN max
+  Return max
 }
 min(&list, &ind, delim = ",") public {
-  SET min = 1e13,ind=""
-  IF $d(list)\10 {
-    SET el=""
-    FOR {
-      SET el=$o(list(el), 1, v)
-      QUIT:el=""
-      IF $d(v),v<min {
-        SET min=v,ind=el
-      } ELSEIF '$d(v),el<min {
-        SET min=el
+  Set min = 1e13,ind=""
+  If $Data(list)\10 {
+    Set el = ""
+    For {
+      Set el = $Order(list(el), 1, v)
+      Quit:el=""
+      If $Data(v),v<min {
+        Set min = v,ind=el
+      }
+      ElseIf '$Data(v),el<min {
+        Set min = el
       }
     }
-  } ELSE {
-    IF '$lv(list) set list=$lfs(list, delim)
-    FOR i=1:1:$ll(list) {
-      SET v = $lg(list, i)
-      IF v<min set min=v,ind=i
+  }
+  Else {
+    If '$Listvalid(list) set list=$Listfromstring(list, delim)
+    For i=1:1:$Listlength(list) {
+      Set v = $Listget(list, i)
+      If v<min set min=v,ind=i
     }
   }
-  RETURN min
+  Return min
 }
 sum(list, delim = ",") public {
-  SET sum = 0
-  IF $d(list)\10 {
-    SET el=""
-    FOR {
-      SET el=$o(list(el), 1, v)
-      QUIT:el=""
-      IF $i(sum, v)
-    }
-  } ELSE {
-    IF '$lv(list) set list=$lfs(list, delim)
-    FOR i=1:1:$ll(list) {
-      SET v = $lg(list, i)
-      IF $i(sum, v)
+  Set sum = 0
+  If $Data(list)\10 {
+    Set el = ""
+    For {
+      Set el = $Order(list(el), 1, v)
+      Quit:el=""
+      If $Increment(sum, v)
     }
   }
-  RETURN sum
+  Else {
+    If '$Listvalid(list) set list=$Listfromstring(list, delim)
+    For i=1:1:$Listlength(list) {
+      Set v = $Listget(list, i)
+      If $Increment(sum, v)
+    }
+  }
+  Return sum
 }
 sort(list) public {
-  FOR i=1:1:$l(list) {
-    SET c = $e(list, i)
-    IF $i(sort(c))
+  For i=1:1:$Length(list) {
+    Set c = $Extract(list, i)
+    If $Increment(sort(c))
   }
-  SET res = ""
-  SET c = ""
-  FOR {
-    SET c = $o(sort(c), 1, cnt)
-    QUIT:c=""
-    SET res = res _ $tr($j("", cnt), " ", c)
+  Set res = ""
+  Set c = ""
+  For {
+    Set c = $Order(sort(c), 1, cnt)
+    Quit:c=""
+    Set res = res _ $Translate($Justify("", cnt), " ", c)
   }
-  RETURN res
+  Return res
 }
 toHex(string) public {
-  SET res = ""
-  FOR i=1:1:$l(string) {
-    SET val = $a(string, i)
-    SET hex = $zcvt($tr($j($zhex(val), 2), " ", "0"), "l")
-    SET res = res_hex
+  Set res = ""
+  For i=1:1:$Length(string) {
+    Set val = $Ascii(string, i)
+    Set hex = $ZConvert($Translate($Justify($ZHex(val), 2), " ", "0"), "l")
+    Set res = res_hex
   }
-  RETURN res
+  Return res
 }
 insert(data, pos, val) public {
-  SET val = $li(data, 1, pos)_$lb(val)_$li(data, pos + 1, $ll(data))
-  RETURN val
+  Set val = $List(data, 1, pos)_$Listbuild(val)_$List(data, pos + 1, $Listlength(data))
+  Return val
 }
 dec(bit, len = 32) public {
-  SET res = 0
-  FOR i=1:1:len {
-    CONTINUE:'$BIT(bit, i)
-    SET res = res + (2**(i-1))
+  Set res = 0
+  For i=1:1:len {
+    Continue:'$Bit(bit, i)
+    Set res = res + (2**(i-1))
   }
-  RETURN res
+  Return res
 }
 and(a, b, len = 32) public {
-  SET a = $FACTOR(a)
-  SET b = $FACTOR(b)
-  RETURN $$dec($BITLOGIC(a&b, len))
+  Set a = $Factor(a)
+  Set b = $Factor(b)
+  Return $$dec($Bitlogic(a&b, len))
 }
 or(a, b, len = 32) public {
-  SET a = $FACTOR(a)
-  SET b = $FACTOR(b)
-  RETURN $$dec($BITLOGIC(a|b, len))
+  Set a = $Factor(a)
+  Set b = $Factor(b)
+  Return $$dec($Bitlogic(a|b, len))
 }
 xor(a, b, len = 32) public {
-  SET a = $FACTOR(a)
-  SET b = $FACTOR(b)
-  RETURN $$dec($BITLOGIC(a^b, len))
+  Set a = $Factor(a)
+  Set b = $Factor(b)
+  Return $$dec($Bitlogic(a^b, len))
+}
+gcd(a, b) public {
+  Set a = $ZAbs(a), b = $ZAbs(b)
+  While b {
+    Set $Listbuild(a, b) = $Listbuild(b, a#b)
+  }
+  Quit a
+}
+lcm(list) public {
+  Set $Listbuild(v1, v2) = list
+  Set val = $ZAbs(v1)/$$gcd(v1,v2)*$ZAbs(v2)
+  If $Listlength(list)=2 {
+    Quit val
+  }
+  Quit $$lcm($Listbuild(val)_$List(list, 3, *))
 }
