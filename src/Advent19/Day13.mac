@@ -1,0 +1,115 @@
+ROUTINE Advent19.Day13
+#include helper
+Start() public {
+  $$$inputFull(program)
+  Set program = $Listfromstring(program)
+  Set game = $$run(program) //, , .pos, .end, .base)
+
+  Set $List(program, 1) = 2
+  Set game = $$run(.program, 0, .pos, .end, .base)
+  Write #
+  Do fill(.map, game, .blocks, .ball, .pad, .score)
+  Set dir = 0
+  Do {
+    Set out = $$run(.program, dir, .pos, .end, .base)
+    Do fill(.map, out, ,.ball, .pad, .score)
+    Set dir = $Select(pad = ball: 0, pad > ball: -1, 1: 1)
+    #; Hang .01
+  } While 'end
+  Write !!
+  ZWrite score
+  ZWrite blocks
+}
+fill(&map, info, &blocks, &ball, &pad, &score = 0) {
+  For i=1:3:$Listlength(info) {
+    Set $Listbuild(x, y, t) = $List(info, i, i + 2)
+    Set x = x + 1, y = y + 1
+    If x=0 {
+      Set:t score = t
+      Write *27,*91,3,*59,45,*72,score
+    } Else  {
+      Write *27,*91,y,*59,x,*72
+      Write *27
+      Write $Case(t,
+        0: "[0m ",
+        1: "[40m ",
+        2: "[42m ",
+        3: "[43m ",
+        4: "[0m*",
+        : "[0m ")
+      Write *27,"[0m"
+    }
+    Set map(y, x) = t
+    If t=3 Set pad = x
+    If t=4 Set ball = x
+    If t=2,$Increment(blocks)
+  }
+  Write *27,*91,25,*72
+}
+run(&program, input = "", pos = 1, end = 0, base = 0) public {
+  If program'="",'$Listvalid(program) {
+    Set program = $Listfromstring(program)
+  }
+  If input'="",'$Listvalid(input) {
+    Set input = $Listfromstring(input)
+  }
+  #; Set base = 0
+  Set output = ""
+  For ii=1:1 {
+    Set command = $Translate($Justify($List(program, pos), 5), " ", 0)
+    Set opcode = +$Extract(command, *-1, *)
+    Break:+command=0
+    Quit:opcode=99
+
+    Set numParams = $Select(1278[opcode: 3, 56[opcode: 2, 1: 1)
+
+    Set param1 = +$Extract(command, *-2)
+    Set pos1 = $List(program, pos + 1)
+    If opcode'=3 {
+      Set val1 = $Select(param1 = 2: $Listget(program, base + pos1 + 1), param1 = 1: pos1, 1: $Listget(program, pos1 + 1))
+    }
+
+    If numParams>1 {
+      Set param2 = +$Extract(command, *-3)
+      Set pos2 = $List(program, pos + 2)
+      Set val2 = $Select(param2 = 2: $Listget(program, base + pos2 + 1), param2 = 1: pos2, 1: $Listget(program, pos2 + 1))
+    }
+    If numParams>2 {
+      Set param3 = +$Extract(command, *-4)
+      Set pos3 = $Select(param3 = 2: base + $List(program, pos + 3), 1: $List(program, pos + 3))
+    }
+    If opcode=9 {
+      Set base = base + val1
+      Set pos = pos + 2
+    }
+    If opcode=3 {
+      If (input="")  Return output
+      Set val1 = $List(input, 1)
+      Set $List(input, 1, 1) = ""
+      Set pos1 = $Select(param1 = 2: base + $List(program, pos + 1), 1: $List(program, pos + 1))
+      Set $List(program, pos1 + 1) = val1
+      Set pos = pos + 2
+    }
+    ElseIf opcode=4 {
+      Set output = output_$Listbuild(val1)
+      Set pos = pos + 2
+    }
+    Else {
+      If 12[opcode {
+        Set val3 = $Case(opcode, 1: val1 + val2, 2: val1 * val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+      ElseIf 56[opcode {
+        Set pos = $Select((opcode=5)&&(val1'=0): val2 +1, (opcode=6)&&(val1=0): val2 + 1, 1: pos + 3)
+      }
+      ElseIf 78[opcode {
+        Set val3 = $Case(opcode, 7: val1 < val2, 8: val1 = val2)
+        Set $List(program, pos3 + 1) = val3
+        Set pos = pos + 4
+      }
+    }
+  }
+  Set end = 1
+  Return output
+}
