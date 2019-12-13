@@ -14,7 +14,7 @@ Start() public {
     Set out = $$run(.program, dir, .pos, .end, .base)
     Do fill(.map, out, ,.ball, .pad, .score)
     Set dir = $Select(pad = ball: 0, pad > ball: -1, 1: 1)
-    #; Hang .01
+    Hang .02
   } While 'end
   Write !!
   ZWrite score
@@ -23,19 +23,20 @@ Start() public {
 fill(&map, info, &blocks, &ball, &pad, &score = 0) {
   For i=1:3:$Listlength(info) {
     Set $Listbuild(x, y, t) = $List(info, i, i + 2)
-    Set x = x + 1, y = y + 1
-    If x=0 {
+    If x<0 {
       Set:t score = t
-      Write *27,*91,3,*59,45,*72,score
+      #; Write *27,*91,1,*59,4,*72,score
     } Else  {
+      Set x = x + 1, y = y + 2
+      Set x = x * 3 - 2, y = y
       Write *27,*91,y,*59,x,*72
       Write *27
       Write $Case(t,
-        0: "[0m ",
-        1: "[40m ",
-        2: "[42m ",
-        3: "[43m ",
-        4: "[0m*",
+        0: "[0m   ",
+        1: "[40m   ",
+        2: "[42m   ",
+        3: "[43m   ",
+        4: "[0m ◉ ",
         : "[0m ")
       Write *27,"[0m"
     }
@@ -44,7 +45,7 @@ fill(&map, info, &blocks, &ball, &pad, &score = 0) {
     If t=4 Set ball = x
     If t=2,$Increment(blocks)
   }
-  Write *27,*91,25,*72
+  Write *27,*91,26,*72,"Score = ",score,!
 }
 run(&program, input = "", pos = 1, end = 0, base = 0) public {
   If program'="",'$Listvalid(program) {
