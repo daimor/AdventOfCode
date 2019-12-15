@@ -1,0 +1,58 @@
+ROUTINE Advent19.Day14
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  While $$$nextLine(lines, line) {
+    Set from = $Piece(line, " => ", 1)
+    Set to = $Piece(line, " => ", 2)
+
+    Set $Listbuild(count, what) = $Listfromstring(to, " ")
+
+    Set from = $Listfromstring(from, ", ")
+    Set list(what) = count
+    For i=1:1:$Listlength(from) {
+      Set list(what, i) = $Listfromstring($List(from, i), " ")
+    }
+  }
+  Set part1 = $$count(.list, "FUEL", 1)
+  ZWrite part1
+  Set goal = 1000000000000
+  Set fuel = 10000000
+  Set ore = $$count(.list, "FUEL", fuel)
+  Set fuel = $$$ceil(goal / ore * fuel) + 1
+  for {
+    Set ore = $$count(.list, "FUEL", fuel)
+    Quit:ore<goal
+    Set fuel = fuel - 1
+  }
+  ZWrite fuel
+}
+count(&list, what, need, &more) {
+  Set ind = ""
+  Set count = 0
+  If what="ORE" {
+    Quit need
+  }
+  If $Get(more(what))>need {
+    Set more(what) = more(what) - need
+    Quit 0
+  }
+  If $Get(more(what))>0 {
+    Set need = need - more(what)
+    Set more(what) = 0
+  }
+
+  Set produces = list(what)
+  Set produce = $$$ceil(need / produces)
+  Set more(what) = produce * produces - need
+  For  {
+    Set ind = $Order(list(what, ind), 1, data)
+    Quit:ind=""
+    Set $Listbuild(cnt, source) = data
+    Set count = count + $$count(.list, source, produce * cnt, .more)
+  }
+
+  Quit count
+}

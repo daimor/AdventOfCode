@@ -29,3 +29,4 @@ ROUTINE helper [Type=INC]
 #def1arg xor(%args) $$xor^helper(%args)
 
 #define lcm(%list) $$lcm^helper(%list)
+#define ceil(%v) $$ceil^helper(%v)

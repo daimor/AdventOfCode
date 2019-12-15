@@ -151,3 +151,6 @@ lcm(list) public {
   }
   Quit $$lcm($Listbuild(val)_$List(list, 3, *))
 }
+ceil(val) public {
+  return $SYSTEM.SQL.CEILING(val)
+}
