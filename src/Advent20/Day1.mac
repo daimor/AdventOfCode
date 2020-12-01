@@ -1,0 +1,46 @@
+ROUTINE Advent20.Day1
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  set part1 = $$sum2(.lines)
+  zw part1
+  set part2 = $$sum3(.lines)
+  zw part2
+}
+sum2(&list, res) {
+  set count = list
+  set res = 0
+  for i=1:1:count {
+    for j=1:1:count {
+      continue:i=j
+      set sum = list(i) + list(j)
+      continue:sum'=2020
+      set res = list(i) * list(j)
+      quit
+    }
+    quit:res
+  }
+  quit res
+}
+sum3(&list) {
+  set count = list
+  set res = 0
+  for i=1:1:count {
+    for j=1:1:count {
+      continue:i=j
+      for k=1:1:count {
+        continue:j=k
+        continue:i=k
+        set sum = list(i) + list(j) + list(k)
+        continue:sum'=2020
+        set res = list(i) * list(j) * list(k)
+        quit
+      }
+      quit:res
+    }
+    quit:res
+  }
+  quit res
+}
