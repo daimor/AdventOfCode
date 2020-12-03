@@ -1,0 +1,29 @@
+ROUTINE Advent20.Day3
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  Set part1 = $$count(.lines, 3, 1)
+  ZWrite part1
+  Set part2 = 1
+  Set part2 = part2 * $$count(.lines, 1, 1)
+  Set part2 = part2 * part1
+  Set part2 = part2 * $$count(.lines, 5, 1)
+  Set part2 = part2 * $$count(.lines, 7, 1)
+  Set part2 = part2 * $$count(.lines, 1, 2)
+  ZWrite part2
+}
+count(&input, right,down) {
+  Set count = 0
+  Set pos = 1
+  Set len = $Length(input(1))
+  For i=1+down:down:input {
+    Set pos = pos + right
+    Set:pos>len pos = pos # len
+    If $Extract(input(i), pos)="#" {
+      Set count = count + 1
+    }
+  }
+  Quit count
+}
