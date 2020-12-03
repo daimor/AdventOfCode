@@ -1,0 +1,33 @@
+ROUTINE Advent20.Day2
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  Set part1 = 0, part2 = 0
+  For i=1:1:lines {
+    Set text = lines(i)
+    Set $ListBuild(min, max, char, pass) = $$match("(\d+)-(\d+) ([a-z]): ([a-z]+)", text)
+    Set count = $Length(pass) - $Length($Translate(pass, char))
+    If (count<=max),(count>=min) {
+      Set part1 = part1 + 1
+    }
+    set $lb(pos1, pos2) = $lb(min, max)
+    if ($e(pass,pos1)=char)+($e(pass,pos2)=char)=1 {
+      set part2 = part2 + 1
+    }
+  }
+  ZWrite part1,part2
+
+}
+match(regexp, text) {
+  Set res = ""
+  Set pattern = ##class(%Regex.Matcher).%New(regexp)
+  Set pattern.Text = text
+  If (pattern.Locate()) {
+    For i=1:1:pattern.GroupCount {
+      Set res = res _ $ListBuild(pattern.Group(i))
+    }
+  }
+  Quit res
+}
