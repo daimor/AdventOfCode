@@ -30,3 +30,5 @@ ROUTINE helper [Type=INC]
 
 #define lcm(%list) $$lcm^helper(%list)
 #define ceil(%v) $$ceil^helper(%v)
+
+#define match(%regexp, %text) $$match^helper(%regexp, %text)

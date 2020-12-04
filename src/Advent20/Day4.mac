@@ -1,0 +1,65 @@
+ROUTINE Advent20.Day4
+#include helper
+Start() [byr,iyr,eyr,hgt,hcl,ecl,pid] public {
+  New byr,iyr,eyr,hgt,hcl,ecl,pid
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  Do parse(.lines, .data)
+
+  Set eclList = $ListBuild("amb","blu","brn","gry","grn","hzl","oth")
+
+  Set fields = $ListBuild("byr","iyr","eyr","hgt","hcl","ecl","pid")
+  Set part1 = 0, part2 = 0
+  For i=1:1:data {
+    Set ok = 1
+    For j=1:1:$ListLength(fields) {
+      Set fld = $ListGet(fields,j)
+      Continue:$Data(data(i,fld),@fld)
+      Set ok = 0
+      Quit
+    }
+    Continue:'ok
+    Set part1 = part1 + 1
+
+    Set byr = +byr
+    Continue:(byr<1920)||(byr>2002)
+
+    Set iyr = +iyr
+    Continue:(iyr<2010)||(iyr>2020)
+
+    Set eyr = +eyr
+    Continue:(eyr<2020)||(eyr>2030)
+
+    Continue:$Case(
+          $Extract(hgt, *-1, *),
+          "cm": (+hgt<150)||(+hgt>193),
+          "in": (+hgt<59)||(+hgt>76),
+          :1)
+
+    Continue:'$Match(hcl, "^#[a-f0-9]{6}$")
+
+    Continue:'$ListFind(eclList,ecl)
+
+    Continue:'$Match(pid, "^[0-9]{9}$")
+
+    Set part2 = part2 + 1
+  }
+  ZWrite part1,part2
+}
+parse(&input, &data) {
+  Set id = 1
+  For i=1:1:input {
+    Set line = input(i)
+    If line="" {
+      Set id = id + 1
+      Continue
+    }
+    Set line = $ListFromString(line, " ")
+    For j=1:1:$ListLength(line) {
+      Set $ListBuild(code, val) = $$$match("([a-z]+):(.+)", $ListGet(line, j))
+      Set data(id, code) = val
+    }
+  }
+  Set data = $Order(data(""), -1)
+}

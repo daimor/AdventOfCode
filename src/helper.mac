@@ -154,3 +154,14 @@ lcm(list) public {
 ceil(val) public {
   return $SYSTEM.SQL.CEILING(val)
 }
+match(regexp, text) public {
+  Set res = ""
+  Set pattern = ##class(%Regex.Matcher).%New(regexp)
+  Set pattern.Text = text
+  If (pattern.Locate()) {
+    For i=1:1:pattern.GroupCount {
+      Set res = res _ $ListBuild(pattern.Group(i))
+    }
+  }
+  Quit res
+}
