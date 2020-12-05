@@ -1,0 +1,47 @@
+ROUTINE Advent20.Day5
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(lines)
+  For i=1:1:lines {
+    Set $ListBuild(row, col, id) = $$seat(lines(i))
+    Set seats(id) = $ListBuild(row, col)
+  }
+  Set minId = $Order(seats(""), 1)
+  Set maxId = $Order(seats(""), -1)
+  Write !,"Max seatId = ", maxId,!
+  For id=minId:1:maxId {
+    If '$Data(seats(id)) {
+      Write !,"SeatId = ",id
+    }
+  }
+}
+seat(input) public {
+  Set res = ""
+  Set rmin = 0, rmax = 127
+  For i=1:1:7 {
+    Set dir = $Extract(input, i)
+    Set val = rmax - rmin
+    If dir="F" {
+      Set rmax = (val - 1) / 2 + rmin
+    } Else {
+      Set rmin = (val + 1) / 2 + rmin
+    }
+  }
+  Set row = rmin
+
+  Set cmin = 0, cmax = 7
+  For i=8:1:10 {
+    Set dir = $Extract(input, i)
+    Set val = cmax - cmin
+    If dir="L" {
+      Set cmax = (val - 1) / 2 + cmin
+    } Else {
+      Set cmin = (val + 1) / 2 + cmin
+    }
+  }
+  Set col = cmin
+  Set id = row * 8 + col
+  Quit $ListBuild(row, col, id)
+}
