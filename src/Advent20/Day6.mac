@@ -1,0 +1,33 @@
+ROUTINE Advent20.Day6
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+
+  Set group = ""
+  Set part1 = 0, part2 = 0
+  For i=1:1:input+1 {
+    Set answers = $$$sort($Get(input(i)))
+    If (answers = "") {
+      Set group2 = $ListGet(group)
+
+      For j=2:1:$ListLength(group) {
+        Set group2 = $ZStrip(group2, "*A", "", $ListGet(group, j))
+      }
+      Set group = $ListToString(group, "")
+      Set group = $$$sort(group)
+      Set group = $ZStrip(group, "=A")
+      Set part1 = part1 + $Length(group)
+
+      Set part2 = part2 + $Length(group2)
+      Set group = ""
+    } Else {
+      Set group = group _ $ListBuild(answers)
+    }
+
+  }
+
+  ZWrite part1
+  ZWrite part2
+}
