@@ -1,0 +1,49 @@
+ROUTINE Advent20.Day7
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+  For i=1:1:input {
+    Set line = input(i)
+    Quit:line=""
+    Continue:line["no other bags"
+    Set $ListBuild(color) = $$$match("(\w+ \w+)", line)
+    Set contain = $ListFromString($Piece(line, " contain ", 2), ",")
+    Set prevcolor = color
+    For j=1:1:$ListLength(contain) {
+      Set $ListBuild(count, scolor) = $$$match("(\d+) (\w+ \w+)", $ListGet(contain, j))
+      Set out(scolor, color) = ""
+      Set prevcolor = scolor
+      Set in(color, scolor) = count
+    }
+  }
+  Do count(.out, "shiny gold", .result)
+  Set part1 = result
+  ZWrite part1
+  Set part2 = $$countIn(.in, "shiny gold")
+  ZWrite part2
+}
+count(&data, color, &out) {
+  Set scolor = ""
+  For {
+    Set scolor = $Order(data(color, scolor))
+    Quit:scolor=""
+    If '$Data(out(scolor)),$Increment(out) {
+      Set out(scolor) = ""
+      Do count(.data, scolor, .out)
+    }
+  }
+}
+countIn(&data, color) {
+  Set count = 0
+  Set scolor = ""
+  Quit:'$Data(data(color)) 0
+  For {
+    Set scolor = $Order(data(color, scolor), 1, cnt)
+    Quit:scolor=""
+    set cntIn = cnt * $$countIn(.data, scolor)
+    Set count = count + cnt + cntIn
+  }
+  Quit count
+}
