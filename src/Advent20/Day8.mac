@@ -4,38 +4,39 @@ Start() public {
   #; $$$inputAll(input)
   #; $$$inputFull(input)
   $$$input(input)
+  If $$compile(.input, .errs)'=0 {
+    ZWrite errs
+    Quit
+  }
   Set ts = $ZHorolog
-  Write !!,"Part1 = ",$$run(.input)
+  Write !,"Part1 = ",$$run^Advent20.Day8.gen()
   Write !,"time spent: ",$ZHorolog-ts
 
   Set ts = $ZHorolog
-  Write !!,"Part2 = ",$$run(.input,,1)
+  Write !!,"Part2 = ",$$run^Advent20.Day8.gen(1)
   Write !,"time spent: ",$ZHorolog-ts
 }
-run(&code, acc = 0, fix = 0) [fixAttempt] {
-  If (fix) {
-    For fix=fix+1:1:code {
-      Quit:code(fix)'["acc"
-    }
-  }
-  For i=1:1:code {
-    Set $ListBuild(op, val) = $$$match("(\w+) ([+-]\d+)", code(i))
-    If (i=fix) {
-      Set op = $Case(op, "nop": "jmp", "jmp": "nop")
-    }
+compile(&input,&errs) {
+  Set code(0) = 1
+  Set code(1) = "run(fix=0) public { set acc = 0 "
+  For i=1:1:input {
+    Set $ListBuild(op, val) = $$$match("(\w+) ([+-]\d+)", input(i))
     If (op = "acc") {
-      Set acc = acc + val
+      Set codeLine = " set acc = acc "_val
     }
-    ElseIf (op = "jmp") {
-      Set i = i - 1 + val
+    If (op = "jmp") {
+      Set codeLine = " if (fix="_i_") {} else { goto run+"_(i + val) _ " }"
     }
-    If ($Data(inLoop(i))) {
-      If (fix) {
-        Return $$run(.code,,fix)
-      }
-      Quit
+    If (op = "nop") {
+      Set codeLine = " if (fix="_i_") { goto run+"_(i + val) _ " }"
     }
-    Set inLoop(i) = 1
+    Set codeLine = " if ($data(inLoop"_i_")) { quit:fix $$run(fix+1)  quit acc } set inLoop"_i_" = 1 " _ codeLine
+    Set code(0) = code(0) + 1
+    Set code(code(0)) = codeLine
   }
-  Return acc
+  Set code(0) = code(0) + 1
+  Set code(code(0)) = " quit acc }"
+  Set rtnName = $ZName _ ".gen"
+  Set res = $Compile(code, 0, errs,,,,rtnName)
+  Quit res
 }
