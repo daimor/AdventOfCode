@@ -1,0 +1,41 @@
+ROUTINE Advent20.Day8
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+  Set ts = $ZHorolog
+  Write !!,"Part1 = ",$$run(.input)
+  Write !,"time spent: ",$ZHorolog-ts
+
+  Set ts = $ZHorolog
+  Write !!,"Part2 = ",$$run(.input,,1)
+  Write !,"time spent: ",$ZHorolog-ts
+}
+run(&code, acc = 0, fix = 0) [fixAttempt] {
+  If (fix) {
+    For fix=fix+1:1:code {
+      Quit:code(fix)'["acc"
+    }
+  }
+  For i=1:1:code {
+    Set $ListBuild(op, val) = $$$match("(\w+) ([+-]\d+)", code(i))
+    If (i=fix) {
+      Set op = $Case(op, "nop": "jmp", "jmp": "nop")
+    }
+    If (op = "acc") {
+      Set acc = acc + val
+    }
+    ElseIf (op = "jmp") {
+      Set i = i - 1 + val
+    }
+    If ($Data(inLoop(i))) {
+      If (fix) {
+        Return $$run(.code,,fix)
+      }
+      Quit
+    }
+    Set inLoop(i) = 1
+  }
+  Return acc
+}
