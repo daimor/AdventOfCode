@@ -4,38 +4,42 @@ Start() public {
   #; $$$inputAll(input)
   #; $$$inputFull(input)
   $$$input(input)
-  If $$compile(.input, .errs)'=0 {
+  If $$compile(.input, .errs, .code)'=0 {
     ZWrite errs
     Quit
   }
   Set ts = $ZHorolog
-  Write !,"Part1 = ",$$run^Advent20.Day8.gen()
+  Write !,"Part1 = ",$$run^Advent20.Day8.gen(,,.stack)
   Write !,"time spent: ",$ZHorolog-ts
 
   Set ts = $ZHorolog
-  Write !!,"Part2 = ",$$run^Advent20.Day8.gen(1)
+  Write !!,"Part2 = "
+  Set i = ""
+  For {
+    Set i = $Order(stack(i), -1, line) Quit:i=""
+    Set part2 = $$run^Advent20.Day8.gen(line,.failed)
+    Quit:'failed
+  }
+  Write part2
   Write !,"time spent: ",$ZHorolog-ts
 }
-compile(&input,&errs) {
+compile(&input,&errs,&code) {
   Set code(0) = 1
-  Set code(1) = "run(fix=0) public { set acc = 0 "
+  Set code(1) = "run(fix=0,&failed,&stack=0) public { set acc = 0, failed = 1"
   For i=1:1:input {
     Set $ListBuild(op, val) = $$$match("(\w+) ([+-]\d+)", input(i))
     If (op = "acc") {
-      Set codeLine = " set acc = acc "_val
+      Set codeLine = " quit:$data(inLoop"_i_") acc set acc = acc "_val _ " set inLoop"_i_" = 1"
     }
-    If (op = "jmp") {
-      Set codeLine = " if (fix="_i_") {} else { goto run+"_(i + val) _ " }"
+    Else {
+      Set not = $Select(op="jmp": "'", 1: "")
+      Set codeLine = " set:'fix stack($i(stack))="_i_" if (fix"_not_"="_i_") goto run+"_(i + val)
     }
-    If (op = "nop") {
-      Set codeLine = " if (fix="_i_") { goto run+"_(i + val) _ " }"
-    }
-    Set codeLine = " if ($data(inLoop"_i_")) { quit:fix $$run(fix+1)  quit acc } set inLoop"_i_" = 1 " _ codeLine
     Set code(0) = code(0) + 1
     Set code(code(0)) = codeLine
   }
   Set code(0) = code(0) + 1
-  Set code(code(0)) = " quit acc }"
+  Set code(code(0)) = " set failed = 0 quit acc }"
   Set rtnName = $ZName _ ".gen"
   Set res = $Compile(code, 0, errs,,,,rtnName)
   Quit res
