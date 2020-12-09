@@ -4,44 +4,51 @@ Start() public {
   $$$inputAll(input)
   #; $$$inputFull(input)
   #; $$$input(lines)
+  Set $List(input, *) = ""
   Set len = 25
-  Set all = $ListLength(input) - 1
+
+  Set ts = $ZHorolog
+  Set all = $ListLength(input)
   For i=len+1:1:all {
     Set val = $ListGet(input, i)
     Quit:'$$search($List(input, i-1-len, i-1), val)
   }
   Set part1 = val
-  ZWrite part1
+  Write !,"Part1 = ",part1
+  $$$runtime
 
-  For i=1:1:all {
+  Set ts = $ZHorolog
+  Set part2 = 0
+  For i=i:-1:1 {
     Set val = $ListGet(input, i)
     Set sum = val
-    For j=1:1 {
-      Set val = $ListGet(input, i + j)
+    For j=i-1:-1 {
+      Set val = $ListGet(input, j)
       Set sum = sum + val
       Quit:sum>part1
       If sum=part1 {
-        Set list = $List(input, i, i+j)
+        Set list = $List(input, j, i)
         Set min = $$$min(list)
         Set max = $$$max(list)
         Set part2 = min + max
-        ZWrite part2
         Quit
       }
     }
+    Quit:part2
   }
-
+  Write !,"Part2 = ",part2
+  $$$runtime
 }
 search(input, val) {
-  For i=1:1:$ListLength(input) {
-    For j=1:1:$ListLength(input) {
-      Continue:i=j
-      Set val1 = $ListGet(input, i)
-      Set val2 = $ListGet(input, j)
+  Set ptr1 = 0
+  While $ListNext(input, ptr1, val1) {
+    Continue:val1>val
+    Set ptr2 = 0
+    While $ListNext(input, ptr2, val2) {
+      Continue:ptr1=ptr2
       Set sum = val1 + val2
-      If (sum=val) {
-        Return 1
-      }
+      Continue:(sum'=val)
+      Return 1
     }
   }
   Quit 0

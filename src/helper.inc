@@ -1,17 +1,18 @@
 ROUTINE helper [Type=INC]
+#define runtime Write !,"runtime: ",$zh-ts,! set ts = $zh
 #define openFile set fs=##class(%Stream.FileCharacter).%New() ##continue
   set year="20"_$p($p($zname,"Advent",2),"."),day=$zcvt($p($zname,".",2),"l") ##continue
   set sc=fs.LinkToFile("/opt/advent/input/"_year_"/"_day_".txt")
 
 #define inputFull(%input) $$$openFile ##continue
-  set %input = $zstrip(fs.Read(fs.Size), "<>WC") ##continue
+  set %input = $zstrip(fs.Read(fs.Size), "<>WC") set ts = $zh
 
 #define inputAll(%input) $$$openFile ##continue
   set %input = fs.Read(fs.Size) ##continue
-  set %input = $lfs($tr(%input,$c(13)),$c(10)),ptr=0
+  set %input = $lfs($tr(%input,$c(13)),$c(10)),ptr=0,ts=$zh
 
 #define input(%lines) $$$openFile ##continue
-  while 'fs.AtEnd { set %lines($i(%lines)) = fs.ReadLine() }
+  while 'fs.AtEnd { set %lines($i(%lines)) = fs.ReadLine() } set ts = $zh
 
 #define nextLine(%lines, %line) $d(%lines)&&(($lv(%lines)&&$listnext(%lines,ptr,%line))||($d(%lines($i(index)), %line)))
 

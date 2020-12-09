@@ -12,7 +12,7 @@ Start() public {
   Try {
     Set ts = $ZHorolog
     Do @("^"_rtnName)
-    Write !,"runtime: ",$ZHorolog-ts
+    Write !,"complete: ",$ZHorolog-ts
   }
   Catch {
     Write $ZError
@@ -56,6 +56,14 @@ newDay(year,day) public {
     Do fs.WriteLine("  #; $$$inputAll(input)")
     Do fs.WriteLine("  #; $$$inputFull(input)")
     Do fs.WriteLine("  #; $$$input(lines)")
+    Do fs.WriteLine("  ")
+    Do fs.WriteLine("  Set part1 = 0, part2 = 0")
+    Do fs.WriteLine("  ")
+    Do fs.WriteLine("  Write !,""Part1 = "",part1")
+    Do fs.WriteLine("  $$$runtime")
+    Do fs.WriteLine("  ")
+    Do fs.WriteLine("  Write !,""Part2 = "",part2")
+    Do fs.WriteLine("  $$$runtime")
     Do fs.WriteLine("}")
     If fs.%Save() {
       Do $System.OBJ.Load(fs.Filename, "ck")
