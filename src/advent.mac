@@ -1,7 +1,7 @@
 ROUTINE advent
 Start() public {
-  Set $Listbuild(mon,day,year) = $Listfromstring($ZDate($Horolog), "/")
-  If mon'=12 quit
+  Set $ListBuild(mon,day,year) = $ListFromString($ZDate($Horolog), "/")
+  If mon'=12 Quit
   Set day = +day
   Set yy = $Extract(year, 3, 4)
   Set rtnName = "Advent"_yy_".Day"_day
@@ -10,9 +10,11 @@ Start() public {
     Do newDay(year, day)
   }
   Try {
+    Set ts = $ZHorolog
     Do @("^"_rtnName)
+    Write !,"runtime: ",$ZHorolog-ts
   }
-  catch {
+  Catch {
     Write $ZError
   }
   Quit
@@ -20,12 +22,12 @@ Start() public {
 newDay(year,day) public {
   Set yy = $Extract(year, *-1, *)
   Set routinePath = "/opt/advent/src/Advent"_yy
-  if ('##class(%File).Exists(routinePath)) && ('##class(%File).CreateDirectoryChain(routinePath)) {
+  If ('##class(%File).Exists(routinePath)) && ('##class(%File).CreateDirectoryChain(routinePath)) {
     Write !,"Creating directory: ",routinePath," - ERROR"
     Return
   }
   Set inputPath = "/opt/advent/input/"_year
-  if ('##class(%File).Exists(inputPath)) && ('##class(%File).CreateDirectoryChain(inputPath)) {
+  If ('##class(%File).Exists(inputPath)) && ('##class(%File).CreateDirectoryChain(inputPath)) {
     Write !,"Creating directory: ",inputPath," - ERROR"
     Return
   }
@@ -62,7 +64,7 @@ newDay(year,day) public {
 cert(host) public {
   New $Namespace
   Set $Namespace = "%SYS"
-  If ##class(Security.SSLConfigs).Exists(host) quit host
+  If ##class(Security.SSLConfigs).Exists(host) Quit host
   Set cert = ##class(Security.SSLConfigs).%New()
   Set cert.Name = host
   Do cert.%Save()

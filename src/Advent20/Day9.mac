@@ -1,0 +1,48 @@
+ROUTINE Advent20.Day9
+#include helper
+Start() public {
+  $$$inputAll(input)
+  #; $$$inputFull(input)
+  #; $$$input(lines)
+  Set len = 25
+  Set all = $ListLength(input) - 1
+  For i=len+1:1:all {
+    Set val = $ListGet(input, i)
+    Quit:'$$search($List(input, i-1-len, i-1), val)
+  }
+  Set part1 = val
+  ZWrite part1
+
+  For i=1:1:all {
+    Set val = $ListGet(input, i)
+    Set sum = val
+    For j=1:1 {
+      Set val = $ListGet(input, i + j)
+      Set sum = sum + val
+      Quit:sum>part1
+      If sum=part1 {
+        Set list = $List(input, i, i+j)
+        Set min = $$$min(list)
+        Set max = $$$max(list)
+        Set part2 = min + max
+        ZWrite part2
+        Quit
+      }
+    }
+  }
+
+}
+search(input, val) {
+  For i=1:1:$ListLength(input) {
+    For j=1:1:$ListLength(input) {
+      Continue:i=j
+      Set val1 = $ListGet(input, i)
+      Set val2 = $ListGet(input, j)
+      Set sum = val1 + val2
+      If (sum=val) {
+        Return 1
+      }
+    }
+  }
+  Quit 0
+}
