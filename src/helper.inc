@@ -9,7 +9,9 @@ ROUTINE helper [Type=INC]
 
 #define inputAll(%input) $$$openFile ##continue
   set %input = fs.Read(fs.Size) ##continue
-  set %input = $lfs($tr(%input,$c(13)),$c(10)),ptr=0,ts=$zh
+  set %input = $lfs($tr(%input,$c(13)),$c(10)) ##continue
+  set:$List(input,*)="" $List(input,*,*)="" ##Continue
+  set ptr=0,ts=$zh
 
 #define input(%lines) $$$openFile ##continue
   while 'fs.AtEnd { set %lines($i(%lines)) = fs.ReadLine() } set ts = $zh

@@ -55,7 +55,7 @@ newDay(year,day) public {
   Do fs.WriteLine("Start() public {")
     Do fs.WriteLine("  #; $$$inputAll(input)")
     Do fs.WriteLine("  #; $$$inputFull(input)")
-    Do fs.WriteLine("  #; $$$input(lines)")
+    Do fs.WriteLine("  $$$input(lines)")
     Do fs.WriteLine("  ")
     Do fs.WriteLine("  Set part1 = 0, part2 = 0")
     Do fs.WriteLine("  ")

@@ -1,0 +1,53 @@
+ROUTINE Advent20.Day10
+#include helper
+Start() public {
+  $$$inputAll(input)
+  #; $$$inputFull(input)
+  #; $$$input(input)
+
+  Set part1 = 0, part2 = 0
+
+  Set input = $$$sort(input)
+  Set len = $ListLength(input)
+
+  Set max = $$$max(input)
+  Set min = $$$min(input)
+  Set prev = 0, ptr = 0
+  #; Set input = $ListBuild(0)_input_$ListBuild(max+3)
+  set cnt(3) = 1
+  While $ListNext(input, ptr, val) {
+    Set diff = val - prev
+    If diff,$Increment(cnt(diff))
+    Set prev = val
+  }
+  Set part1 = cnt(1) * cnt(3)
+
+  Write !,"Part1 = ",part1
+  $$$runtime
+
+  kill %cache
+  Set part2 = $$find(input, 0, max + 3)
+  Write !,"Part2 = ",part2
+  $$$runtime
+}
+find(list, start , goal) {
+  Set len = $ListLength(list)
+  Set key = $ListBuild(len, start)
+  If ($Data(%cache(len, start), count)) Quit count
+  Set count = 0
+  If ((goal - start) <= 3) {
+    Set count = count + 1
+  }
+  If '$ListLength(list) {
+    Quit count
+  }
+
+  If (($ListGet(list, 1) - start) <= 3) {
+    Set count = count + $$find($List(list, 2, *), $ListGet(list), goal)
+  }
+  Set count = count + $$find($List(list, 2, *), start, goal)
+
+  Set %cache(len, start) = count
+
+  Quit count
+}

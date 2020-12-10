@@ -2,9 +2,9 @@ ROUTINE helper
 knot(str) public {
   Set lengths = ""
   For i=1:1:$Length(str) {
-    Set lengths = lengths _ $Listbuild($Ascii(str, i))
+    Set lengths = lengths _ $ListBuild($Ascii(str, i))
   }
-  Set lengths = lengths _ $Listbuild(17, 31, 73, 47, 23)
+  Set lengths = lengths _ $ListBuild(17, 31, 73, 47, 23)
   Set hash = $$knot^Advent17.Day10(.data, lengths, 256, 64)
   Return hash
 }
@@ -14,7 +14,7 @@ toBits(str) public {
     Set c = $ZHex($Extract(str, i))
     Set b = $Factor(c)
     For j=4:-1:1 {
-      Set $Bit(bits, $Bitcount(bits) + 1) = $Bit(b,j)
+      Set $Bit(bits, $BitCount(bits) + 1) = $Bit(b,j)
     }
   }
   Return bits
@@ -35,10 +35,10 @@ max(&list, &ind, delim = ",") public {
     }
   }
   Else {
-    If '$Listvalid(list) set list=$Listfromstring(list, delim)
-    For i=1:1:$Listlength(list) {
-      Set v = $Listget(list, i)
-      If v>max set max=v,ind=i
+    If '$ListValid(list) Set list=$ListFromString(list, delim)
+    For i=1:1:$ListLength(list) {
+      Set v = $ListGet(list, i)
+      If v>max Set max=v,ind=i
     }
   }
   Return max
@@ -59,10 +59,10 @@ min(&list, &ind, delim = ",") public {
     }
   }
   Else {
-    If '$Listvalid(list) set list=$Listfromstring(list, delim)
-    For i=1:1:$Listlength(list) {
-      Set v = $Listget(list, i)
-      If v<min set min=v,ind=i
+    If '$ListValid(list) Set list=$ListFromString(list, delim)
+    For i=1:1:$ListLength(list) {
+      Set v = $ListGet(list, i)
+      If v<min Set min=v,ind=i
     }
   }
   Return min
@@ -78,27 +78,43 @@ sum(list, delim = ",") public {
     }
   }
   Else {
-    If '$Listvalid(list) set list=$Listfromstring(list, delim)
-    For i=1:1:$Listlength(list) {
-      Set v = $Listget(list, i)
+    If '$ListValid(list) Set list=$ListFromString(list, delim)
+    For i=1:1:$ListLength(list) {
+      Set v = $ListGet(list, i)
       If $Increment(sum, v)
     }
   }
   Return sum
 }
 sort(list) public {
-  For i=1:1:$Length(list) {
-    Set c = $Extract(list, i)
-    If $Increment(sort(c))
+  Set asList = 0
+  If $ListValid(list) {
+    Set asList = 1
+    Set ptr = 0
+    While $ListNext(list, ptr, val) {
+      If $Increment(sort(val))
+    }
+  } Else {
+    For i=1:1:$Length(list) {
+      Set c = $Extract(list, i)
+      If $Increment(sort(c))
+    }
   }
   Set res = ""
   Set c = ""
   For {
     Set c = $Order(sort(c), 1, cnt)
     Quit:c=""
-    Set res = res _ $Translate($Justify("", cnt), " ", c)
+    If asList {
+      Set res = res _ $ListBuild(c)
+    } Else {
+      Set res = res _ $Translate($Justify("", cnt), " ", c)
+    }
   }
   Return res
+}
+sortList(list) {
+  Quit res
 }
 toHex(string) public {
   Set res = ""
@@ -110,7 +126,7 @@ toHex(string) public {
   Return res
 }
 insert(data, pos, val) public {
-  Set val = $List(data, 1, pos)_$Listbuild(val)_$List(data, pos + 1, $Listlength(data))
+  Set val = $List(data, 1, pos)_$ListBuild(val)_$List(data, pos + 1, $ListLength(data))
   Return val
 }
 dec(bit, len = 32) public {
@@ -124,35 +140,35 @@ dec(bit, len = 32) public {
 and(a, b, len = 32) public {
   Set a = $Factor(a)
   Set b = $Factor(b)
-  Return $$dec($Bitlogic(a&b, len))
+  Return $$dec($BitLogic(a&b, len))
 }
 or(a, b, len = 32) public {
   Set a = $Factor(a)
   Set b = $Factor(b)
-  Return $$dec($Bitlogic(a|b, len))
+  Return $$dec($BitLogic(a|b, len))
 }
 xor(a, b, len = 32) public {
   Set a = $Factor(a)
   Set b = $Factor(b)
-  Return $$dec($Bitlogic(a^b, len))
+  Return $$dec($BitLogic(a^b, len))
 }
 gcd(a, b) public {
   Set a = $ZAbs(a), b = $ZAbs(b)
   While b {
-    Set $Listbuild(a, b) = $Listbuild(b, a#b)
+    Set $ListBuild(a, b) = $ListBuild(b, a#b)
   }
   Quit a
 }
 lcm(list) public {
-  Set $Listbuild(v1, v2) = list
+  Set $ListBuild(v1, v2) = list
   Set val = $ZAbs(v1)/$$gcd(v1,v2)*$ZAbs(v2)
-  If $Listlength(list)=2 {
+  If $ListLength(list)=2 {
     Quit val
   }
-  Quit $$lcm($Listbuild(val)_$List(list, 3, *))
+  Quit $$lcm($ListBuild(val)_$List(list, 3, *))
 }
 ceil(val) public {
-  return $SYSTEM.SQL.CEILING(val)
+  Return $System.SQL.CEILING(val)
 }
 match(regexp, text) public {
   Set res = ""
