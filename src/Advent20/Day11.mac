@@ -1,0 +1,99 @@
+ROUTINE Advent20.Day11
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+  Set part1 = 0, part2 = 0
+
+  Do buildMap(.input, .map)
+
+  Merge map1 = map
+  Do change(.map1)
+  Set part1 = $$count(.map1)
+
+  Write !,"Part1 = ",part1
+  $$$runtime
+
+  Merge map2 = map
+  Do change(.map2, 1)
+  Set part2 = $$count(.map2)
+
+  Write !,"Part2 = ",part2
+  $$$runtime
+}
+buildMap(&input,&map) {
+  Set len = $Length(input(1))
+  For y=1:1:input {
+    Set line = input(y)
+    Quit:line=""
+    For x=1:1:len {
+      Set map(y,x) = $Select($Extract(line, x)="L": 0, 1: -1)
+    }
+  }
+  Set rows = $Order(map(""), -1)
+  Set cols = $Order(map(1, ""), -1)
+  Set map = $ListBuild(rows, cols)
+}
+show(&map) {
+  Set $ListBuild(rows, cols) = map
+  For y = 1:1:rows {
+    Write !
+    For x = 1:1:cols {
+      Write $Case(map(y, x), 1: "#", 0: "L", : ".")
+    }
+  }
+  Write !!
+}
+count(&map) {
+  Set count = 0
+  Set $ListBuild(rows, cols) = map
+  For y = 1:1:rows {
+    For x = 1:1:cols {
+      Set c = map(y, x)
+      Continue:c<1
+      Set count = count + 1
+    }
+  }
+  Quit count
+}
+change(&map, part2 = 0) {
+  Set changed = 0
+  Set $ListBuild(rows, cols) = map
+  For y = 1:1:rows {
+    For x = 1:1:cols {
+      Set c = map(y, x)
+      Continue:c<0
+      Set cnt = 0
+      Set quit = 0
+      For dx=-1,0,1 {
+        For dy=-1,0,1 {
+          Continue:(dx=0)&&(dy=0)
+          Set ty = y + dy, tx = x + dx
+          Continue:'$Data(map(ty,tx))
+          If (part2) {
+            Set ty = y, tx = x
+            For {
+              Set ty = ty + dy, tx = tx + dx
+              Quit:'$Data(map(ty,tx),tc)
+              Continue:tc<0
+              Set cnt = cnt + map(ty,tx)
+              Quit
+            }
+          } Else {
+            Set cnt = cnt + (map(ty,tx)=1)
+          }
+          Set quit = (cnt>=(4+part2))||(('c)&&(cnt))
+          Quit:quit
+        }
+        Quit:quit
+      }
+      If (c&&(cnt>=(4+part2)))||('c&&(cnt=0)) {
+        Set newmap(y,x) = 'c
+        Set changed = 1
+      }
+    }
+  }
+  Merge map = newmap
+  Do:changed change(.map, part2)
+}
