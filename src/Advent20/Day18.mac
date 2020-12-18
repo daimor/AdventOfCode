@@ -1,0 +1,48 @@
+ROUTINE Advent20.Day18
+#include helper
+Start() [result] public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+
+  Set part1 = 0, part2 = 0
+
+  For i=1:1:input {
+    Set line = input(i)
+    Quit:line=""
+    Set @("result = " _ line)
+    Set part1 = part1 + result
+  }
+  Write !,"Part1 = ",part1
+  $$$runtime
+
+  For i=1:1:input {
+    Set line = input(i)
+    Quit:line=""
+    Set result = $$eval(line)
+    Set part2 = part2 + result
+  }
+
+  Write !,"Part2 = ",part2
+  $$$runtime
+}
+eval(text) public {
+  Set patternAdd = ##class(%Regex.Matcher).%New("(\d+(?: \+ \d+))")
+  Set patternMul = ##class(%Regex.Matcher).%New("((?<!\+ |\d)\d+(?: \* \d+)(?!\d| \+))")
+  Set parens = ##class(%Regex.Matcher).%New("\((\d+)\)")
+  Do {
+    Set text = $$sign(text, patternAdd, parens)
+    Set text = $$sign(text, patternMul, parens)
+  } While text'?.N
+  Return text
+}
+sign(text, pattern, parens) [ result ] {
+  Set pattern.Text = text
+  While pattern.Locate() {
+    Set gr = pattern.Group(1)
+    Set @("result = " _ gr)
+    Set pattern.Text = pattern.ReplaceFirst(result)
+  }
+  Set parens.Text = pattern.Text
+  Return parens.ReplaceAll("$1")
+}
