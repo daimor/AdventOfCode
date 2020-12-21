@@ -1,0 +1,109 @@
+ROUTINE Advent20.Day21
+#include helper
+Start() public {
+  #; $$$inputAll(input)
+  #; $$$inputFull(input)
+  $$$input(input)
+  Do normalize(.input,.data)
+
+  Set part1 = 0, part2 = 0
+
+  Set part1 = $$part1(.data,.map)
+
+  Write !,"Part1 = ",part1
+  $$$runtime
+
+  Set part2 = $$part2(.map)
+
+  Write !,"Part2 = ",part2
+  $$$runtime
+}
+normalize(&input,&data) {
+  For i=1:1:input {
+    Set line = input(i)
+    Quit:line=""
+
+    Set line = $Translate(line, "(),")
+    Set $ListBuild(foods, allergens) = $ListFromString(line, " contains ")
+    Set foods = $ListFromString(foods, " ")
+    Set allergens = $ListFromString(allergens, " ")
+    Set data($Increment(data)) = $ListBuild(allergens, foods)
+  }
+}
+part1(&data,&map) {
+  Set count = 0
+  For i=1:1:data {
+    Set $ListBuild(allergens, foods) = data(i)
+    Set ptr = 0
+    While $ListNext(foods, ptr, food) {
+      If $Increment(count),$Increment(counts(food))
+    }
+
+    Set ptr = 0
+    While $ListNext(allergens, ptr, allergen) {
+      If $Data(map(allergen), prev) {
+        Set map(allergen) = $$intersect(prev, foods)
+      } Else {
+        Set map(allergen) = foods
+      }
+    }
+  }
+  Set allergen = ""
+  For {
+    Set allergen =$Order(map(allergen), 1, foods)
+    Quit:allergen=""
+    Set ptr = 0
+    While $ListNext(foods, ptr, food) {
+      Set count = count - $Get(counts(food))
+      Kill counts(food)
+    }
+  }
+  Quit count
+}
+intersect(list1, list2) {
+  Set ptr = 0, list = ""
+  While $ListNext(list1, ptr, item) {
+    If $ListFind(list2, item) {
+      Set list = list _ $ListBuild(item)
+    }
+  }
+  Quit list
+}
+part2(&map) {
+  For {
+    Set more = 0
+    Set allergen = ""
+    For {
+      Set allergen = $Order(map(allergen), 1, foods)
+      Quit:allergen=""
+      If $ListLength(foods)=1 {
+        Set food = $ListGet(foods)
+        Do remove(.map,food)
+      } Else {
+        Set more = 1
+      }
+    }
+    Quit:'more
+  }
+  Set list = ""
+  Set allergen = ""
+  For {
+    Set allergen = $Order(map(allergen), 1, foods)
+    Quit:allergen=""
+    Set list = list _ foods
+  }
+
+  Quit $ListToString(list)
+}
+remove(&map,food) {
+  Set allergen = ""
+  For {
+    Set allergen = $Order(map(allergen), 1, foods)
+    Quit:allergen=""
+    Continue:$ListLength(foods)=1
+    Set pos = $ListFind(foods, food)
+    Continue:'pos
+    Set $List(foods, pos, pos) = ""
+    Set map(allergen) = foods
+  }
+}
